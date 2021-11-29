@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.ProtocolMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.Protocol" >
+    <constructor >
+      <idArg column="pr_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="to_user" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="title" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="content" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="use_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    pr_id, id, to_user, create_time, title, content, use_time, state
+  </sql>
+
+  <select id="findByprotocol" resultMap="BaseResultMap" parameterType="com.czx.yimem.entity.Protocol" >
+    select
+    <include refid="Base_Column_List" />
+    from protocol
+    <where>
+      1=1
+      <if test="prId != null and prId != ''">
+        and pr_id = #{prId}
+      </if>
+      <if test="title != null and title!=''">
+        and title like  concat('%',#{title},'%')
+      </if>
+      <if test="toUser != null and toUser != ''">
+        and to_user = #{toUser}
+      </if>
+      <if test="state != null and state != ''">
+        and state = #{state}
+      </if>
+    </where>
+    ORDER BY create_time DESC
+  </select>
+
+  <select id="findTimeUpid" resultType="java.lang.Integer" >
+    select pr_id
+    from protocol
+    WHERE NOW()>use_time and state='2'
+  </select>
+
+  <update id="updatefindTimeUp">
+    UPDATE `protocol` SET  `state`='1' WHERE pr_id=#{id};
+  </update>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from protocol
+    where pr_id = #{prId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectBytouser" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from protocol
+    where to_user = #{touser} and state='1'
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from protocol
+    where pr_id = #{prId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.czx.yimem.entity.Protocol" >
+    insert into protocol (pr_id, id, to_user,
+      create_time, title, content,
+      use_time, state)
+    values (#{prId,jdbcType=INTEGER}, #{id,jdbcType=INTEGER}, #{toUser,jdbcType=VARCHAR},
+      now(), #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
+      #{useTime,jdbcType=TIMESTAMP}, #{state,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.czx.yimem.entity.Protocol"  useGeneratedKeys="true" keyProperty="prId">
+    insert into protocol
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="prId != null" >
+        pr_id,
+      </if>
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="toUser != null" >
+        to_user,
+      </if>
+        create_time,
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="useTime != null" >
+        use_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="prId != null" >
+        #{prId,jdbcType=INTEGER},
+      </if>
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="toUser != null" >
+        #{toUser,jdbcType=VARCHAR},
+      </if>
+      now(),
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="useTime != null" >
+        #{useTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.Protocol" >
+    update protocol
+    <set >
+      <if test="id != null" >
+        id = #{id,jdbcType=INTEGER},
+      </if>
+      <if test="toUser != null" >
+        to_user = #{toUser,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="useTime != null" >
+        use_time = #{useTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where pr_id = #{prId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.Protocol" >
+  update protocol
+  set id = #{id,jdbcType=INTEGER},
+      to_user = #{toUser,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      use_time = #{useTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=VARCHAR}
+  where pr_id = #{prId,jdbcType=INTEGER}
+</update>
+
+  <update id="updateState" parameterType="com.czx.yimem.entity.Protocol" >
+    update protocol as a ,(SELECT to_user from protocol WHERE pr_id=#{prId}) b
+    set
+      a.state = '0'
+      where a.to_user = b.to_user  and a.state ='1' and a.pr_id &lt;&gt; #{prId}
+  </update>
+</mapper>

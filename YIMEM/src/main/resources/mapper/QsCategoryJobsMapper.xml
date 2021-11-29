@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.QsCategoryJobsMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.QsCategoryJobs" >
+    <constructor >
+      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="parentid" jdbcType="SMALLINT" javaType="java.lang.Short" />
+      <arg column="categoryname" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="category_order" jdbcType="SMALLINT" javaType="java.lang.Short" />
+      <arg column="stat_jobs" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="stat_resume" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="spell" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="relation1" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="relation1_cn" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="relation2" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="relation2_cn" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.czx.yimem.entity.QsCategoryJobs" >
+    <constructor >
+      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="parentid" jdbcType="SMALLINT" javaType="java.lang.Short" />
+      <arg column="categoryname" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="category_order" jdbcType="SMALLINT" javaType="java.lang.Short" />
+      <arg column="stat_jobs" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="stat_resume" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="spell" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="relation1" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="relation1_cn" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="relation2" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="relation2_cn" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="content" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, parentid, categoryname, category_order, stat_jobs, stat_resume, spell, relation1,
+    relation1_cn, relation2, relation2_cn
+  </sql>
+  <sql id="Blob_Column_List" >
+    content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from qs_category_jobs
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+  <select id="selecAll" resultType="com.czx.yimem.entity.QsCategoryJobs" >
+    select
+      q.*,j.money,j.brokerage
+    from qs_category_jobs q
+           LEFT JOIN job_category j on j.job_cate_id=q.id
+  </select>
+
+  <select id="findByqsCategoryJobs" resultMap="BaseResultMap" parameterType="com.czx.yimem.entity.QsCategoryJobs" >
+    select
+    <include refid="Base_Column_List" />
+    from qs_category_jobs
+    <where>
+      1=1
+      <if test="id != null and id != ''">
+        and id = #{id}
+      </if>
+      <if test="parentid != null and parentid != ''">
+        and parentid =#{parentid}
+      </if>
+      <if test="categoryname != null  and categoryname != ''">
+        and categoryname like  concat('%',#{categoryname},'%')
+      </if>
+    </where>
+  </select>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from qs_category_jobs
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.czx.yimem.entity.QsCategoryJobs" >
+    insert into qs_category_jobs (id, parentid, categoryname,
+      category_order, stat_jobs, stat_resume,
+      spell, relation1, relation1_cn,
+      relation2, relation2_cn, content
+      )
+    values (#{id,jdbcType=INTEGER}, #{parentid,jdbcType=SMALLINT}, #{categoryname,jdbcType=VARCHAR},
+      #{categoryOrder,jdbcType=SMALLINT}, #{statJobs,jdbcType=VARCHAR}, #{statResume,jdbcType=VARCHAR},
+      #{spell,jdbcType=VARCHAR}, #{relation1,jdbcType=VARCHAR}, #{relation1Cn,jdbcType=VARCHAR},
+      #{relation2,jdbcType=VARCHAR}, #{relation2Cn,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective"  useGeneratedKeys="true" keyProperty="id" parameterType="com.czx.yimem.entity.QsCategoryJobs" >
+    insert into qs_category_jobs
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null and id=''" >
+        id,
+      </if>
+      <if test="parentid != null" >
+        parentid,
+      </if>
+      <if test="categoryname != null" >
+        categoryname,
+      </if>
+      <if test="categoryOrder != null" >
+        category_order,
+      </if>
+      <if test="statJobs != null" >
+        stat_jobs,
+      </if>
+      <if test="statResume != null" >
+        stat_resume,
+      </if>
+      <if test="spell != null" >
+        spell,
+      </if>
+      <if test="relation1 != null" >
+        relation1,
+      </if>
+      <if test="relation1Cn != null" >
+        relation1_cn,
+      </if>
+      <if test="relation2 != null" >
+        relation2,
+      </if>
+      <if test="relation2Cn != null" >
+        relation2_cn,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null and id=''" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="parentid != null" >
+        #{parentid,jdbcType=SMALLINT},
+      </if>
+      <if test="categoryname != null" >
+        #{categoryname,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryOrder != null" >
+        #{categoryOrder,jdbcType=SMALLINT},
+      </if>
+      <if test="statJobs != null" >
+        #{statJobs,jdbcType=VARCHAR},
+      </if>
+      <if test="statResume != null" >
+        #{statResume,jdbcType=VARCHAR},
+      </if>
+      <if test="spell != null" >
+        #{spell,jdbcType=VARCHAR},
+      </if>
+      <if test="relation1 != null" >
+        #{relation1,jdbcType=VARCHAR},
+      </if>
+      <if test="relation1Cn != null" >
+        #{relation1Cn,jdbcType=VARCHAR},
+      </if>
+      <if test="relation2 != null" >
+        #{relation2,jdbcType=VARCHAR},
+      </if>
+      <if test="relation2Cn != null" >
+        #{relation2Cn,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.QsCategoryJobs" >
+    update qs_category_jobs
+    <set >
+      <if test="parentid != null" >
+        parentid = #{parentid,jdbcType=SMALLINT},
+      </if>
+      <if test="categoryname != null" >
+        categoryname = #{categoryname,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryOrder != null" >
+        category_order = #{categoryOrder,jdbcType=SMALLINT},
+      </if>
+      <if test="statJobs != null" >
+        stat_jobs = #{statJobs,jdbcType=VARCHAR},
+      </if>
+      <if test="statResume != null" >
+        stat_resume = #{statResume,jdbcType=VARCHAR},
+      </if>
+      <if test="spell != null" >
+        spell = #{spell,jdbcType=VARCHAR},
+      </if>
+      <if test="relation1 != null" >
+        relation1 = #{relation1,jdbcType=VARCHAR},
+      </if>
+      <if test="relation1Cn != null" >
+        relation1_cn = #{relation1Cn,jdbcType=VARCHAR},
+      </if>
+      <if test="relation2 != null" >
+        relation2 = #{relation2,jdbcType=VARCHAR},
+      </if>
+      <if test="relation2Cn != null" >
+        relation2_cn = #{relation2Cn,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.czx.yimem.entity.QsCategoryJobs" >
+    update qs_category_jobs
+    set parentid = #{parentid,jdbcType=SMALLINT},
+      categoryname = #{categoryname,jdbcType=VARCHAR},
+      category_order = #{categoryOrder,jdbcType=SMALLINT},
+      stat_jobs = #{statJobs,jdbcType=VARCHAR},
+      stat_resume = #{statResume,jdbcType=VARCHAR},
+      spell = #{spell,jdbcType=VARCHAR},
+      relation1 = #{relation1,jdbcType=VARCHAR},
+      relation1_cn = #{relation1Cn,jdbcType=VARCHAR},
+      relation2 = #{relation2,jdbcType=VARCHAR},
+      relation2_cn = #{relation2Cn,jdbcType=VARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.QsCategoryJobs" >
+    update qs_category_jobs
+    set parentid = #{parentid,jdbcType=SMALLINT},
+      categoryname = #{categoryname,jdbcType=VARCHAR},
+      category_order = #{categoryOrder,jdbcType=SMALLINT},
+      stat_jobs = #{statJobs,jdbcType=VARCHAR},
+      stat_resume = #{statResume,jdbcType=VARCHAR},
+      spell = #{spell,jdbcType=VARCHAR},
+      relation1 = #{relation1,jdbcType=VARCHAR},
+      relation1_cn = #{relation1Cn,jdbcType=VARCHAR},
+      relation2 = #{relation2,jdbcType=VARCHAR},
+      relation2_cn = #{relation2Cn,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.czx.yimem.dao.CvFileDao">
+
+    <resultMap id="BaseResultMap" type="com.czx.yimem.entity.CvFile">
+        <!--@Table cv_file-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="url" column="url" jdbcType="VARCHAR"/>
+        <result property="state" column="state" jdbcType="VARCHAR"/>
+        <result property="createtime" column="createtime" jdbcType="TIMESTAMP"/>
+        <result property="filename" column="filename" jdbcType="VARCHAR"/>
+        <result property="filesize" column="filesize" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="BaseResultMap">
+        select
+          id, user_id, url, state, createtime, filename,filesize
+        from test_job.cv_file
+        where id = #{id}
+    </select>
+
+
+    <select id="queryByuserId" resultMap="BaseResultMap">
+        select
+            id, user_id, url, state, createtime, filename,filesize
+        from test_job.cv_file
+        where user_id = #{userId} limit 1
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BaseResultMap">
+        select
+          id, user_id, url, state, createtime, filename,filesize
+        from test_job.cv_file
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="BaseResultMap">
+        select
+          id, user_id, url, state, createtime, filename,filesize
+        from test_job.cv_file
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="url != null and url != ''">
+                and url = #{url}
+            </if>
+            <if test="state != null and state != ''">
+                and state = #{state}
+            </if>
+            <if test="createtime != null">
+                and createtime = #{createtime}
+            </if>
+            <if test="filename != null and filename != ''">
+                and filename = #{filename}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into test_job.cv_file(user_id, url, state, createtime, filename,filesize)
+        values (#{userId}, #{url}, #{state}, now(), #{filename},#{filesize})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update test_job.cv_file
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="url != null and url != ''">
+                url = #{url},
+            </if>
+            <if test="state != null and state != ''">
+                state = #{state},
+            </if>
+            <if test="createtime != null">
+                createtime = #{createtime},
+            </if>
+            <if test="filename != null and filename != ''">
+                filename = #{filename},
+            </if>
+            <if test="filesize != null and filesize != ''">
+                filesize = #{filesize},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from test_job.cv_file where id = #{id}
+    </delete>
+    <!--通过主键删除-->
+    <delete id="deleteBycvFileId">
+        delete from test_job.cv_file where id = #{id} and  user_id = #{userId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.QsCategoryMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.QsCategory" >
+    <constructor >
+      <idArg column="c_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="c_parentid" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="c_alias" jdbcType="CHAR" javaType="java.lang.String" />
+      <arg column="c_name" jdbcType="CHAR" javaType="java.lang.String" />
+      <arg column="c_order" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="c_index" jdbcType="CHAR" javaType="java.lang.String" />
+      <arg column="c_note" jdbcType="CHAR" javaType="java.lang.String" />
+      <arg column="stat_jobs" jdbcType="CHAR" javaType="java.lang.String" />
+      <arg column="stat_resume" jdbcType="CHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    c_id, c_parentid, c_alias, c_name, c_order, c_index, c_note, stat_jobs, stat_resume
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from qs_category
+    where c_id = #{cId,jdbcType=INTEGER}
+  </select>
+
+  <select id="findByqsCategory" resultMap="BaseResultMap" parameterType="com.czx.yimem.entity.QsCategory" >
+    select
+    <include refid="Base_Column_List" />
+    from qs_category
+    <where>
+      1=1
+      <if test="cId != null and cId != ''">
+        and c_id = #{cId}
+      </if>
+      <if test="cAlias != null and cAlias != ''">
+        and c_alias =#{cAlias}
+      </if>
+      <if test="cName != null  and cName != ''">
+        and c_name =#{cName}
+      </if>
+    </where>
+  </select>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from qs_category
+    where c_id = #{cId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.czx.yimem.entity.QsCategory" >
+    insert into qs_category (c_id, c_parentid, c_alias,
+      c_name, c_order, c_index, c_note,
+      stat_jobs, stat_resume)
+    values (#{cId,jdbcType=INTEGER}, #{cParentid,jdbcType=INTEGER}, #{cAlias,jdbcType=CHAR},
+      #{cName,jdbcType=CHAR}, #{cOrder,jdbcType=INTEGER}, #{cIndex,jdbcType=CHAR}, #{cNote,jdbcType=CHAR},
+      #{statJobs,jdbcType=CHAR}, #{statResume,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.czx.yimem.entity.QsCategory" >
+    insert into qs_category
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="cId != null" >
+        c_id,
+      </if>
+      <if test="cParentid != null" >
+        c_parentid,
+      </if>
+      <if test="cAlias != null" >
+        c_alias,
+      </if>
+      <if test="cName != null" >
+        c_name,
+      </if>
+      <if test="cOrder != null" >
+        c_order,
+      </if>
+      <if test="cIndex != null" >
+        c_index,
+      </if>
+      <if test="cNote != null" >
+        c_note,
+      </if>
+      <if test="statJobs != null" >
+        stat_jobs,
+      </if>
+      <if test="statResume != null" >
+        stat_resume,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="cId != null" >
+        #{cId,jdbcType=INTEGER},
+      </if>
+      <if test="cParentid != null" >
+        #{cParentid,jdbcType=INTEGER},
+      </if>
+      <if test="cAlias != null" >
+        #{cAlias,jdbcType=CHAR},
+      </if>
+      <if test="cName != null" >
+        #{cName,jdbcType=CHAR},
+      </if>
+      <if test="cOrder != null" >
+        #{cOrder,jdbcType=INTEGER},
+      </if>
+      <if test="cIndex != null" >
+        #{cIndex,jdbcType=CHAR},
+      </if>
+      <if test="cNote != null" >
+        #{cNote,jdbcType=CHAR},
+      </if>
+      <if test="statJobs != null" >
+        #{statJobs,jdbcType=CHAR},
+      </if>
+      <if test="statResume != null" >
+        #{statResume,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.QsCategory" >
+    update qs_category
+    <set >
+      <if test="cParentid != null" >
+        c_parentid = #{cParentid,jdbcType=INTEGER},
+      </if>
+      <if test="cAlias != null" >
+        c_alias = #{cAlias,jdbcType=CHAR},
+      </if>
+      <if test="cName != null" >
+        c_name = #{cName,jdbcType=CHAR},
+      </if>
+      <if test="cOrder != null" >
+        c_order = #{cOrder,jdbcType=INTEGER},
+      </if>
+      <if test="cIndex != null" >
+        c_index = #{cIndex,jdbcType=CHAR},
+      </if>
+      <if test="cNote != null" >
+        c_note = #{cNote,jdbcType=CHAR},
+      </if>
+      <if test="statJobs != null" >
+        stat_jobs = #{statJobs,jdbcType=CHAR},
+      </if>
+      <if test="statResume != null" >
+        stat_resume = #{statResume,jdbcType=CHAR},
+      </if>
+    </set>
+    where c_id = #{cId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.QsCategory" >
+    update qs_category
+    set c_parentid = #{cParentid,jdbcType=INTEGER},
+      c_alias = #{cAlias,jdbcType=CHAR},
+      c_name = #{cName,jdbcType=CHAR},
+      c_order = #{cOrder,jdbcType=INTEGER},
+      c_index = #{cIndex,jdbcType=CHAR},
+      c_note = #{cNote,jdbcType=CHAR},
+      stat_jobs = #{statJobs,jdbcType=CHAR},
+      stat_resume = #{statResume,jdbcType=CHAR}
+    where c_id = #{cId,jdbcType=INTEGER}
+  </update>
+</mapper>

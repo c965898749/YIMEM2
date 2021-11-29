@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.DeliverMapper">
+    <resultMap id="BaseResultMap" type="com.czx.yimem.entity.Deliver">
+        <constructor>
+            <idArg column="dev_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="job_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="user_id" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="is_recommend" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="re_user_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        dev_id,
+        id,
+        job_id,
+        user_id,
+        state,
+        create_time,
+        is_recommend,
+        re_user_id,
+        update_time
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from deliver where dev_id = #{devId}
+    </select>
+
+    <select id="finduseidandjobid" resultType="java.lang.Integer">
+        SELECT COUNT(1) from deliver
+        where job_id=#{jobId} and user_id=#{userId}
+    </select>
+
+    <select id="vpnrecommendUserDetailGetsvc" resultType="com.czx.yimem.dto.UserParam" >
+        SELECT j.`name` as jobName,j.brokerage,c.user_name,c.phone_num,d.state from `user` c
+        LEFT JOIN deliver d ON d.user_id =c.user_id
+        LEFT JOIN job j on j.job_id = d.job_id
+        where d.re_user_id=#{userId} and d.dev_id=#{id}
+    </select>
+
+
+    <select id="selectcountByjobIdAndState" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select count(*)
+        from deliver
+        where job_id = #{jobId}
+    </select>
+
+
+    <select id="selectcountByjobId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select count(*)
+        from deliver
+        where job_id = #{jobId}
+    </select>
+
+    <select id="getjobName" resultType="java.lang.String" parameterType="java.lang.Integer">
+        select j.name
+        from deliver d LEFT JOIN job j
+        on j.job_id = d.job_id
+        where dev_id = #{devId}
+    </select>
+
+
+    <select id="selectState" resultType="java.lang.String" parameterType="java.lang.Integer">
+        select state
+        from deliver
+        where dev_id = #{devId}
+    </select>
+
+    <select id="findBydeliver3" resultType="com.czx.yimem.dto.DeliverVO" parameterType="com.czx.yimem.entity.Deliver">
+        SELECT d.dev_id,u.user_name ,u.phone_num
+        ,j.`name` as jobName,q.categoryname as jobCateName,
+        k.`name` as companyName,d.state,d.update_time,m.`name` as reUserName,m.phone as rePhone
+        from deliver d
+        LEFT JOIN user u on u.user_id=d.user_id
+        LEFT JOIN job j on j.job_id= d.job_id
+        LEFT JOIN qs_category_jobs q on q.id=j.job_cate_id
+        LEFT JOIN company k on k.company_id=j.company_id
+        LEFT JOIN distribution m on m.user_id =d.re_user_id
+        <where>
+            <if test="devId != null and devId != ''">
+                and d.dev_id = #{devId}
+            </if>
+            <if test="userName != null and userName != ''">
+                and u.user_name like concat('%',#{userName},'%')
+            </if>
+            <if test="jobName != null and jobName != ''">
+                and j.`name` like concat('%',#{jobName},'%')
+            </if>
+            <if test="state != null and state != ''">
+                and d.state = #{state}
+            </if>
+            <if test="day != null and day != ''">
+                and TIMESTAMPDIFF(DAY,d.update_time,now()) >#{day}
+            </if>
+            <if test="isEntrust != null ">
+                and k.is_entrust=#{isEntrust}
+            </if>
+            <if test="reUserName != null ">
+                and m.`name` like concat('%',#{reUserName},'%')
+            </if>
+        </where>
+        ORDER BY d.update_time DESC
+    </select>
+
+    <select id="findBydeliver2" resultType="com.czx.yimem.dto.DeliverVO" parameterType="com.czx.yimem.entity.Deliver">
+        SELECT d.dev_id,u.user_name ,u.phone_num
+        ,j.`name` as jobName,q.categoryname as jobCateName,
+        k.`name` as companyName,d.state,d.update_time
+        from deliver d
+        LEFT JOIN user u on u.user_id=d.user_id
+        LEFT JOIN job j on j.job_id= d.job_id
+        LEFT JOIN qs_category_jobs q on q.id=j.job_cate_id
+        LEFT JOIN company k on k.company_id=j.company_id
+        <where>
+            1=1
+            <if test="devId != null and devId != ''">
+                and d.dev_id = #{devId}
+            </if>
+            <if test="userName != null and userName != ''">
+                and u.user_name like concat('%',#{userName},'%')
+            </if>
+            <if test="jobName != null and jobName != ''">
+                and j.`name` like concat('%',#{jobName},'%')
+            </if>
+            <if test="state != null and state != ''">
+                and d.state = #{state}
+            </if>
+            <if test="day != null and day != ''">
+                and TIMESTAMPDIFF(DAY,d.update_time,now()) >#{day}
+            </if>
+            <if test="isEntrust != null ">
+                and k.is_entrust=#{isEntrust}
+            </if>
+            <if test="isRecommend != null">
+                and d.is_recommend=#{isRecommend}
+            </if>
+        </where>
+        ORDER BY d.update_time DESC
+    </select>
+
+    <select id="findBydeliver" resultType="com.czx.yimem.entity.Deliver" parameterType="com.czx.yimem.entity.Deliver">
+
+        SELECT
+        z.re_user_id,
+        z.is_recommend,
+        z.user_id AS userId,
+        z.dev_id AS devId,
+        z.job_id AS jobId,
+        z.state,
+        z.create_time AS createTime,
+        w.*
+        FROM
+        deliver z
+        LEFT JOIN (
+        SELECT
+        u.user_id,
+        u.user_name AS userName,
+        (
+        SELECT
+        g.c_name
+        FROM
+        qs_category AS g
+        WHERE
+        g.c_id = (
+        SELECT
+        k.education
+        FROM
+        education_exp AS k
+        WHERE
+        k.user_id = u.user_id
+        ORDER BY
+        k.end_time DESC
+        LIMIT 1
+        )
+        ) AS education,
+        u.phone_num AS phoneNum,
+        u.user_sex AS userSex,
+        u.birthday,
+        u.jion_job_time AS jionJobTime,
+        u.city_id AS cityId,
+        c.zh_label AS cityName,
+        u.emil,
+        u.head_img
+        FROM
+        `user` AS u
+        LEFT JOIN rm_city c ON c.uuid = u.city_id
+        ) w ON w.user_id = z.user_id
+        LEFT JOIN job j ON j.job_id = z.job_id
+        LEFT JOIN company y ON y.company_id = j.company_id
+        <where>
+            1=1
+            <if test="id != null and id != ''">
+                and z.id = #{id}
+            </if>
+            <if test="devId != null and devId != ''">
+                and z.dev_id = #{devId}
+            </if>
+            <if test="jobId != null and jobId != ''">
+                and z.job_id =#{jobId}
+            </if>
+            <if test="userId != null and userId != ''">
+                and z.user_id = #{userId}
+            </if>
+            <if test="state != null and state != ''">
+                and z.state = #{state}
+            </if>
+            <if test="isRecommend != null ">
+                and z.is_recommend = #{isRecommend}
+            </if>
+            <if test="userName != null and userName != ''">
+                and w.userName like concat('%',#{userName},'%')
+            </if>
+            <if test="companyId != null and companyId != ''">
+                and y.company_id = #{companyId}
+            </if>
+            <if test="key != null and key != ''">
+                and  ( w.userName like concat('%',#{key},'%') OR  w.phoneNum= #{key} )
+            </if>
+        </where>
+        ORDER BY
+        z.create_time DESC
+    </select>
+
+
+    <select id="findBydeliver6" resultType="com.czx.yimem.entity.Deliver" parameterType="com.czx.yimem.entity.Deliver">
+
+        SELECT
+        z.re_user_id,
+        z.is_recommend,
+        z.user_id AS userId,
+        z.dev_id AS devId,
+        z.job_id AS jobId,
+        z.state,
+        z.create_time AS createTime,
+        w.*
+        FROM
+        deliver z
+        LEFT JOIN (
+        SELECT
+        u.user_id,
+        u.user_name AS userName,
+        (
+        SELECT
+        g.c_name
+        FROM
+        qs_category AS g
+        WHERE
+        g.c_id = (
+        SELECT
+        k.education
+        FROM
+        education_exp AS k
+        WHERE
+        k.user_id = u.user_id
+        ORDER BY
+        k.end_time DESC
+        LIMIT 1
+        )
+        ) AS education,
+        u.phone_num AS phoneNum,
+        u.user_sex AS userSex,
+        u.birthday,
+        u.jion_job_time AS jionJobTime,
+        u.city_id AS cityId,
+        c.zh_label AS cityName,
+        u.emil,
+        u.head_img
+        FROM
+        `user` AS u
+        LEFT JOIN rm_city c ON c.uuid = u.city_id
+        ) w ON w.user_id = z.user_id
+        LEFT JOIN job j ON j.job_id = z.job_id
+        LEFT JOIN company y ON y.company_id = j.company_id
+        LEFT JOIN collect cl on cl.dev_user_id=z.user_id and cl.company_id=j.company_id
+        <where>
+            1=1
+            <if test="id != null and id != ''">
+                and z.id = #{id}
+            </if>
+            <if test="devId != null and devId != ''">
+                and z.dev_id = #{devId}
+            </if>
+            <if test="jobId != null and jobId != ''">
+                and z.job_id =#{jobId}
+            </if>
+            <if test="userId != null and userId != ''">
+                and z.user_id = #{userId}
+            </if>
+            <if test="state != null and state != ''">
+                and z.state = #{state}
+            </if>
+            <if test="isRecommend != null ">
+                and z.is_recommend = #{isRecommend}
+            </if>
+            <if test="userName != null and userName != ''">
+                and w.userName like concat('%',#{userName},'%')
+            </if>
+            <if test="companyId != null and companyId != ''">
+                and cl.company_id = #{companyId}
+            </if>
+            <if test="key != null and key != ''">
+                and (  w.userName like concat('%',#{key},'%') OR  w.phoneNum= #{key} )
+            </if>
+        </where>
+        ORDER BY
+        z.create_time DESC
+    </select>
+
+    <select id="findBydeliver5" resultType="com.czx.yimem.entity.Deliver" parameterType="com.czx.yimem.entity.Deliver">
+        SELECT
+        z.re_user_id,
+        z.is_recommend,
+        z.user_id AS userId,
+        z.dev_id AS devId,
+        z.job_id AS jobId,
+        z.state,
+        z.create_time AS createTime,
+        j.city_id AS cityId,
+        c.zh_label AS cityName,
+        j.country_id AS countryId,
+        c1.zh_label AS countryName,
+        w.*
+        FROM
+        deliver z
+        LEFT JOIN (
+        SELECT
+        u.user_id,
+        u.user_name AS userName,
+        (
+        SELECT
+        g.c_name
+        FROM
+        qs_category AS g
+        WHERE
+        g.c_id = (
+        SELECT
+        k.education
+        FROM
+        education_exp AS k
+        WHERE
+        k.user_id = u.user_id
+        ORDER BY
+        k.end_time DESC
+        LIMIT 1
+        )
+        ) AS education,
+        u.phone_num AS phoneNum,
+        u.user_sex AS userSex,
+        u.birthday,
+        u.jion_job_time AS jionJobTime,
+        u.emil,
+        u.head_img
+        FROM
+        `user` AS u
+        ) w ON w.user_id = z.user_id
+        LEFT JOIN job j ON j.job_id = z.job_id
+        LEFT JOIN company y ON y.company_id = j.company_id
+        LEFT JOIN rm_city c ON c.uuid = j.city_id
+        LEFT JOIN rm_county c1 ON c1.uuid = j.country_id
+        <where>
+            1=1
+            <if test="id != null and id != ''">
+                and z.id = #{id}
+            </if>
+            <if test="devId != null and devId != ''">
+                and z.dev_id = #{devId}
+            </if>
+            <if test="jobId != null and jobId != ''">
+                and z.job_id =#{jobId}
+            </if>
+            <if test="userId != null and userId != ''">
+                and z.user_id = #{userId}
+            </if>
+            <if test="state != null and state != ''">
+                and z.state = #{state}
+            </if>
+            <if test="isRecommend != null ">
+                and z.is_recommend = #{isRecommend}
+            </if>
+            <if test="userName != null and userName != ''">
+                and w.userName like concat('%',#{userName},'%')
+            </if>
+            <if test="companyId != null and companyId != ''">
+                and y.company_id = #{companyId}
+            </if>
+            <if test="key != null and key != ''">
+                and (  w.userName like concat('%',#{key},'%') OR  w.phoneNum= #{key} )
+            </if>
+        </where>
+        ORDER BY
+        z.create_time DESC
+    </select>
+
+    <select id="findBydeliver4" resultType="com.czx.yimem.entity.Deliver" parameterType="com.czx.yimem.entity.Deliver">
+        SELECT
+        z.re_user_id,
+        z.is_recommend,
+        z.user_id AS userId,
+        z.dev_id AS devId,
+        z.job_id AS jobId,
+        z.state,
+        z.create_time AS createTime,
+        j.city_id AS cityId,
+        c.zh_label AS cityName,
+        j.country_id AS countryId,
+        c1.zh_label AS countryName,
+        w.*
+        FROM
+        deliver z
+        LEFT JOIN (
+        SELECT
+        u.user_id,
+        u.user_name AS userName,
+        (
+        SELECT
+        g.c_name
+        FROM
+        qs_category AS g
+        WHERE
+        g.c_id = (
+        SELECT
+        k.education
+        FROM
+        education_exp AS k
+        WHERE
+        k.user_id = u.user_id
+        ORDER BY
+        k.end_time DESC
+        LIMIT 1
+        )
+        ) AS education,
+        u.phone_num AS phoneNum,
+        u.user_sex AS userSex,
+        u.birthday,
+        u.jion_job_time AS jionJobTime,
+        u.emil,
+        u.head_img
+        FROM
+        `user` AS u
+        ) w ON w.user_id = z.user_id
+        LEFT JOIN job j ON j.job_id = z.job_id
+        LEFT JOIN company y ON y.company_id = j.company_id
+        LEFT JOIN rm_city c ON c.uuid = j.city_id
+        LEFT JOIN rm_county c1 ON c1.uuid = j.country_id
+        <where>
+            1=1
+            <if test="id != null and id != ''">
+                and z.id = #{id}
+            </if>
+            <if test="devId != null and devId != ''">
+                and z.dev_id = #{devId}
+            </if>
+            <if test="jobId != null and jobId != ''">
+                and z.job_id =#{jobId}
+            </if>
+            <if test="userId != null and userId != ''">
+                and z.user_id = #{userId}
+            </if>
+            and z.state = 1 or  z.state = 2
+            <if test="isRecommend != null ">
+                and z.is_recommend = #{isRecommend}
+            </if>
+            <if test="userName != null and userName != ''">
+                and w.userName like concat('%',#{userName},'%')
+            </if>
+            <if test="companyId != null and companyId != ''">
+                and y.company_id = #{companyId}
+            </if>
+            <if test="key != null and key != ''">
+                and  ( w.userName like concat('%',#{key},'%') OR  w.phoneNum= #{key} )
+            </if>
+        </where>
+        ORDER BY
+        z.create_time DESC
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from deliver
+        where dev_id = #{devId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.czx.yimem.entity.Deliver">
+        insert into deliver (dev_id, id, job_id,
+                             user_id, state)
+        values (#{devId,jdbcType=INTEGER}, #{id,jdbcType=INTEGER}, #{jobId,jdbcType=INTEGER},
+                #{userId,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="devId"
+            parameterType="com.czx.yimem.entity.Deliver">
+        insert into deliver
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="devId != null">
+                dev_id,
+            </if>
+            <if test="id != null">
+                id,
+            </if>
+            <if test="jobId != null">
+                job_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="isRecommend != null">
+                is_recommend,
+            </if>
+            <if test="reUserId != null">
+                re_user_id,
+            </if>
+            create_time,
+            update_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="devId != null">
+                #{devId,jdbcType=INTEGER},
+            </if>
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="jobId != null">
+                #{jobId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="isRecommend != null">
+                #{isRecommend,jdbcType=VARCHAR},
+            </if>
+            <if test="reUserId != null">
+                #{reUserId,jdbcType=VARCHAR},
+            </if>
+            now(),
+            now(),
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.Deliver">
+        update deliver
+        <set>
+            <if test="id != null">
+                id = #{id,jdbcType=INTEGER},
+            </if>
+            <if test="jobId != null">
+                job_id = #{jobId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                state = #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="reUserId != null">
+                re_user_id = #{reUserId},
+            </if>
+            update_time = now(),
+        </set>
+        where dev_id = #{devId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.Deliver">
+        update deliver
+        set id      = #{id,jdbcType=INTEGER},
+            job_id  = #{jobId,jdbcType=INTEGER},
+            user_id = #{userId,jdbcType=VARCHAR},
+            state   = #{state,jdbcType=VARCHAR},
+            where dev_id = #{devId,jdbcType=INTEGER}
+    </update>
+</mapper>

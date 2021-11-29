@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.ApplicationForWithdrawalMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.ApplicationForWithdrawal" >
+  <constructor >
+    <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <arg column="phone" jdbcType="VARCHAR" javaType="java.lang.String" />
+    <arg column="user_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+    <arg column="money" jdbcType="DECIMAL" javaType="java.lang.Long" />
+    <arg column="apply_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String" />
+    <arg column="reason" jdbcType="VARCHAR" javaType="java.lang.String" />
+  </constructor>
+</resultMap>
+
+  <select id="getstate" resultType="java.lang.String" parameterType="java.lang.Integer" >
+    select
+      a.state
+    from application_for_withdrawal a where a.id=#{id}
+  </select>
+
+  <select id="findByTime" resultType="com.czx.yimem.dto.ApplicationVO" parameterType="com.czx.yimem.dto.ApplicationVO" >
+    select a.id,DATE_FORMAT(a.apply_time,'%Y-%m') as time ,SUM(a.money) as totalmoney,a.user_id from application_for_withdrawal a
+    where user_id=#{userId}
+    group by DATE_FORMAT(a.apply_time,'%Y-%m')
+    ORDER BY apply_time DESC
+  </select>
+
+
+  <select id="selectapplicationForWithdrawalsBytime" resultType="com.czx.yimem.entity.ApplicationForWithdrawal" parameterType="com.czx.yimem.dto.ApplicationVO" >
+    select
+    *
+    from application_for_withdrawal
+    where apply_time like  concat('%',#{time},'%') and user_id=#{userId}
+    ORDER BY apply_time DESC
+  </select>
+
+  <select id="sumEnMoney" resultType="java.math.BigDecimal" parameterType="java.lang.Integer" >
+    select
+      IFNULL(SUM(a.money),0.00)
+    from application_for_withdrawal a where a.user_id=#{userId} and state =1
+  </select>
+
+  <select id="enMoneyCount" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select
+     count(*)
+    from application_for_withdrawal a where a.user_id=#{userId} and state =1
+  </select>
+
+  <sql id="Base_Column_List" >
+    id, user_id, phone, user_name, money, apply_time, update_time, state, reason
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from application_for_withdrawal
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+
+
+  <select id="findByapplication" resultType="com.czx.yimem.entity.ApplicationForWithdrawal" parameterType="com.czx.yimem.entity.ApplicationForWithdrawal" >
+    select
+    a.* ,IFNULL(w.money,0.00) as  balance   from application_for_withdrawal a
+    LEFT JOIN wallet w on w.user_id=a.user_id
+    <where>
+      1=1
+      <if test="id != null and id != ''">
+        and a.id = #{id}
+      </if>
+      <if test="userName != null and userName != ''">
+        and a.user_name like concat('%',#{userName},'%')
+      </if>
+      <if test="state != null and state != ''">
+        and a.state = #{state}
+      </if>
+      <if test="startTime != null and startTime != '' ">
+        and DATE_FORMAT(a.apply_time,'%Y-%m-%d') &gt;=  #{startTime}
+      </if>
+      <if test="endTime != null and endTime != '' ">
+        and DATE_FORMAT(a.apply_time,'%Y-%m-%d') &lt;=  #{endTime}
+      </if>
+    </where>
+    ORDER BY a.apply_time DESC
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from application_for_withdrawal
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.czx.yimem.entity.ApplicationForWithdrawal" >
+    insert into application_for_withdrawal (id, user_id, phone,
+      user_name, money, apply_time,
+      update_time, state, reason
+      )
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR},
+      #{userName,jdbcType=VARCHAR}, #{money,jdbcType=DECIMAL}, #{applyTime,jdbcType=TIMESTAMP},
+      #{updateTime,jdbcType=TIMESTAMP}, #{state,jdbcType=VARCHAR}, #{reason,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.czx.yimem.entity.ApplicationForWithdrawal" >
+    insert into application_for_withdrawal
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="money != null" >
+        money,
+      </if>
+        apply_time,
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="reason != null" >
+        reason,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="money != null" >
+        #{money,jdbcType=DECIMAL},
+      </if>
+     now(),
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="reason != null" >
+        #{reason,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.ApplicationForWithdrawal" >
+    update application_for_withdrawal
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="money != null" >
+        money = #{money,jdbcType=DECIMAL},
+      </if>
+        update_time = now(),
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="reason != null" >
+        reason = #{reason,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.ApplicationForWithdrawal" >
+    update application_for_withdrawal
+    set user_id = #{userId,jdbcType=INTEGER},
+      phone = #{phone,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR},
+      money = #{money,jdbcType=DECIMAL},
+      apply_time = #{applyTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=VARCHAR},
+      reason = #{reason,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

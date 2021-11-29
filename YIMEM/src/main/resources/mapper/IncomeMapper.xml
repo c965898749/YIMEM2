@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.IncomeMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.Income" >
+    <constructor >
+      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="phone" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="money" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="r_user_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="user_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <select id="findbrokerageRankingList" resultType="com.czx.yimem.dto.BrokerageRankingList" parameterType="java.lang.Integer">
+    SET @crank = 0;
+   SELECT
+    @crank := @crank + 1 AS id,b.money,b.user_id,b.user_name
+    FROM
+    (SELECT user_id,user_name,money from income
+     ORDER BY money DESC LIMIT #{num,jdbcType=INTEGER}) b
+  </select>
+
+  <sql id="Base_Column_List" >
+    id, user_id, phone, money, r_user_num, update_time, user_name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from income
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from income
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+
+  <select id="findByincome" resultType="com.czx.yimem.entity.Income" parameterType="com.czx.yimem.entity.Income" >
+    SELECT d.user_id,d.phone,d.`name` as user_name,(
+    SELECT IFNULL(SUM(brokerage),0)  from income_detail
+    where user_id=d.user_id
+    ) as money ,(
+    SELECT COUNT(*) from income_detail
+    where user_id=d.user_id
+    ) as r_user_num
+    from distribution d
+    <where>
+      1=1
+      <if test="userId != null and userId != ''">
+        and d.user_id =#{userId}
+      </if>
+      <if test="userName != null and userName != ''">
+        and d.name like concat('%',#{userName},'%')
+      </if>
+      <if test="phone != null and phone != ''">
+        and d.phone = #{phone}
+      </if>
+    </where>
+    ORDER BY money DESC
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from income
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.czx.yimem.entity.Income" >
+    insert into income (id, user_id, phone,
+      money, r_user_num, update_time,
+      user_name)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR},
+      #{money,jdbcType=DECIMAL}, #{rUserNum,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP},
+      #{userName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.czx.yimem.entity.Income" >
+    insert into income
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="money != null" >
+        money,
+      </if>
+      <if test="rUserNum != null" >
+        r_user_num,
+      </if>
+        update_time,
+      <if test="userName != null" >
+        user_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="money != null" >
+        #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="rUserNum != null" >
+        #{rUserNum,jdbcType=INTEGER},
+      </if>
+      now(),
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.Income" >
+    update income
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="money != null" >
+        money = #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="rUserNum != null" >
+        r_user_num = #{rUserNum,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.Income" >
+    update income
+    set user_id = #{userId,jdbcType=INTEGER},
+      phone = #{phone,jdbcType=VARCHAR},
+      money = #{money,jdbcType=DECIMAL},
+      r_user_num = #{rUserNum,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      user_name = #{userName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

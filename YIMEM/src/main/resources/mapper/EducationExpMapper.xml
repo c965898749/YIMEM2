@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.EducationExpMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.EducationExp" >
+    <constructor >
+      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="school" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="education" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="major" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="start_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="end_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, school, education, major, start_time, end_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from education_exp
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="findByeducationExpCount" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select
+   count(*)
+    from education_exp
+    where user_id = #{userId}
+  </select>
+
+  <select id="findByeducationExp" resultType="com.czx.yimem.entity.EducationExp" parameterType="com.czx.yimem.entity.EducationExp" >
+    select e.*,q.c_name as educationName,m.categoryname as majorName
+    from education_exp as e
+    LEFT JOIN qs_category as q on e.education=q.c_id
+    LEFT JOIN qs_category_major m on m.id=e.major
+    <where>
+      1=1
+      <if test="userId != null and userId != ''">
+        and user_id = #{userId}
+      </if>
+      <if test="school != null and school != ''">
+        and school like  concat('%',#{school},'%')
+      </if>
+      <if test="education != null and education != ''">
+        and education = #{education}
+      </if>
+      <if test="major != null and major != ''">
+        and major = #{major}
+      </if>
+    </where>
+    ORDER BY end_time DESC
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from education_exp
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.czx.yimem.entity.EducationExp" >
+    insert into education_exp (id, user_id, school,
+      education, major, start_time,
+      end_time)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{school,jdbcType=VARCHAR},
+      #{education,jdbcType=VARCHAR}, #{major,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP},
+      #{endTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.czx.yimem.entity.EducationExp" >
+    insert into education_exp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="school != null" >
+        school,
+      </if>
+      <if test="education != null" >
+        education,
+      </if>
+      <if test="major != null" >
+        major,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="school != null" >
+        #{school,jdbcType=VARCHAR},
+      </if>
+      <if test="education != null" >
+        #{education,jdbcType=VARCHAR},
+      </if>
+      <if test="major != null" >
+        #{major,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.EducationExp" >
+    update education_exp
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="school != null" >
+        school = #{school,jdbcType=VARCHAR},
+      </if>
+      <if test="education != null" >
+        education = #{education,jdbcType=VARCHAR},
+      </if>
+      <if test="major != null" >
+        major = #{major,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.EducationExp" >
+    update education_exp
+    set user_id = #{userId,jdbcType=INTEGER},
+      school = #{school,jdbcType=VARCHAR},
+      education = #{education,jdbcType=VARCHAR},
+      major = #{major,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

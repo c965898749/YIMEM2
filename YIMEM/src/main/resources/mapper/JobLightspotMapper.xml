@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.JobLightspotMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.JobLightspot" >
+    <constructor >
+      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="job_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="job_lighten_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, job_id, job_lighten_id, state
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from job_lightspot
+    where id = #{id,jdbcType=INTEGER}  and state = "1"
+  </select>
+
+  <select id="selectByjobId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from job_lightspot
+    where job_id = #{jobId,jdbcType=INTEGER}  and state = "1"
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from job_lightspot
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="delByJob" parameterType="java.lang.Integer" >
+    delete from job_lightspot
+    where job_id = #{jobId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.czx.yimem.entity.JobLightspot" >
+    insert into job_lightspot (id, job_id, job_lighten_id,
+      state)
+    values (#{id,jdbcType=INTEGER}, #{jobId,jdbcType=INTEGER}, #{jobLightenId,jdbcType=INTEGER},
+      #{state,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective"  parameterType="com.czx.yimem.entity.JobLightspot" >
+    insert into job_lightspot
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="jobId != null" >
+        job_id,
+      </if>
+      <if test="jobLightenId != null" >
+        job_lighten_id,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="jobId != null" >
+        #{jobId,jdbcType=INTEGER},
+      </if>
+      <if test="jobLightenId != null" >
+        #{jobLightenId,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.JobLightspot" >
+    update job_lightspot
+    <set >
+      <if test="jobId != null" >
+        job_id = #{jobId,jdbcType=INTEGER},
+      </if>
+      <if test="jobLightenId != null" >
+        job_lighten_id = #{jobLightenId,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.JobLightspot" >
+    update job_lightspot
+    set job_id = #{jobId,jdbcType=INTEGER},
+      job_lighten_id = #{jobLightenId,jdbcType=INTEGER},
+      state = #{state,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

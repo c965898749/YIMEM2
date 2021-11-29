@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.JobWantedMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.JobWanted" >
+    <constructor >
+      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="job_cate_id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="start_money" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="end_money" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="province_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="city_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="country_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="property" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="business_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="expected_salary_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="is_all_day" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, job_cate_id, start_money, end_money, province_id, city_id, country_id,
+    property, state,business_id,expected_salary_id,is_all_day
+  </sql>
+
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from job_wanted
+    where id = #{id,jdbcType=INTEGER}  and state = "1"
+  </select>
+
+
+  <select id="findBywantedCount" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select
+count(*)    from job_wanted
+    where user_id = #{user_id}
+  </select>
+
+  <select id="findByjobWanted" resultType="com.czx.yimem.entity.JobWanted" parameterType="com.czx.yimem.entity.JobWanted" >
+    select
+    w.* ,q.categoryname as jobCateName ,c.zh_label as cityName ,p.zh_label as provinceName,k.c_name  as propertyName,
+    y.c_name as expectedSalaryName,z.c_name AS stateName,z2.c_name as businessName,co.zh_label as countryName
+    from job_wanted as w
+    LEFT JOIN qs_category_jobs as q on q.id=w.job_cate_id
+    LEFT JOIN rm_city as c on c.uuid=w.city_id
+    LEFT JOIN rm_province as p on p.province_code =c.province_id
+    LEFT JOIN rm_county co  on co.uuid =w.country_id
+    LEFT JOIN qs_category k on k.c_id =w.property
+    LEFT JOIN qs_category y on y.c_id =w.expected_salary_id
+    LEFT JOIN qs_category z ON z.c_id =w.state
+    LEFT JOIN qs_category z2 ON z2.c_id =w.business_id
+    <where>
+      1=1
+      <if test="userId != null and userId!=''">
+        and w.user_id = #{userId}
+      </if>
+      <if test="state != null and state!=''">
+        and w.state = #{state}
+      </if>
+    </where>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from job_wanted
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="delByuserId" parameterType="com.czx.yimem.entity.JobWanted" >
+    delete from job_wanted
+    where user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.czx.yimem.entity.JobWanted" >
+    insert into job_wanted (id, user_id, job_cate_id,
+      start_money, end_money, province_id,
+      city_id, country_id, property,
+      state)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{jobCateId,jdbcType=VARCHAR},
+      #{startMoney,jdbcType=DECIMAL}, #{endMoney,jdbcType=DECIMAL}, #{provinceId,jdbcType=INTEGER},
+      #{cityId,jdbcType=INTEGER}, #{countryId,jdbcType=INTEGER}, #{property,jdbcType=VARCHAR},
+      #{state,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.czx.yimem.entity.JobWanted" >
+    insert into job_wanted
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="jobCateId != null" >
+        job_cate_id,
+      </if>
+      <if test="startMoney != null" >
+        start_money,
+      </if>
+      <if test="endMoney != null" >
+        end_money,
+      </if>
+      <if test="provinceId != null" >
+        province_id,
+      </if>
+      <if test="cityId != null" >
+        city_id,
+      </if>
+      <if test="countryId != null" >
+        country_id,
+      </if>
+      <if test="property != null" >
+        property,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="businessId != null" >
+        business_id,
+      </if>
+      <if test="expectedSalaryId != null" >
+        expected_salary_id,
+      </if>
+      <if test="isAllDay != null" >
+        is_all_day,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="jobCateId != null" >
+        #{jobCateId,jdbcType=VARCHAR},
+      </if>
+      <if test="startMoney != null" >
+        #{startMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="endMoney != null" >
+        #{endMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="provinceId != null" >
+        #{provinceId,jdbcType=INTEGER},
+      </if>
+      <if test="cityId != null" >
+        #{cityId,jdbcType=INTEGER},
+      </if>
+      <if test="countryId != null" >
+        #{countryId,jdbcType=INTEGER},
+      </if>
+      <if test="property != null" >
+        #{property,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="businessId != null" >
+        #{businessId,jdbcType=INTEGER},
+      </if>
+      <if test="expectedSalaryId != null" >
+        #{expectedSalaryId,jdbcType=INTEGER},
+      </if>
+      <if test="isAllDay != null" >
+        #{isAllDay},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.JobWanted" >
+    update job_wanted
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="jobCateId != null" >
+        job_cate_id = #{jobCateId,jdbcType=VARCHAR},
+      </if>
+      <if test="startMoney != null" >
+        start_money = #{startMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="endMoney != null" >
+        end_money = #{endMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="provinceId != null" >
+        province_id = #{provinceId,jdbcType=INTEGER},
+      </if>
+      <if test="cityId != null" >
+        city_id = #{cityId,jdbcType=INTEGER},
+      </if>
+      <if test="countryId != null" >
+        country_id = #{countryId,jdbcType=INTEGER},
+      </if>
+      <if test="property != null" >
+        property = #{property,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="businessId != null" >
+        business_id = #{businessId,jdbcType=INTEGER},
+      </if>
+      <if test="expectedSalaryId != null" >
+        expected_salary_id = #{expectedSalaryId,jdbcType=INTEGER},
+      </if>
+      <if test="isAllDay != null" >
+        is_all_day = #{isAllDay},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByuserId" parameterType="com.czx.yimem.entity.JobWanted" >
+    update job_wanted
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="jobCateId != null" >
+        job_cate_id = #{jobCateId,jdbcType=VARCHAR},
+      </if>
+      <if test="startMoney != null" >
+        start_money = #{startMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="endMoney != null" >
+        end_money = #{endMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="provinceId != null" >
+        province_id = #{provinceId,jdbcType=INTEGER},
+      </if>
+      <if test="cityId != null" >
+        city_id = #{cityId,jdbcType=INTEGER},
+      </if>
+      <if test="countryId != null" >
+        country_id = #{countryId,jdbcType=INTEGER},
+      </if>
+      <if test="property != null" >
+        property = #{property,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="businessId != null" >
+        business_id = #{businessId,jdbcType=INTEGER},
+      </if>
+      <if test="expectedSalaryId != null" >
+        expected_salary_id = #{expectedSalaryId,jdbcType=INTEGER},
+      </if>
+
+      <if test="isAllDay != null" >
+        is_all_day = #{isAllDay},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.JobWanted" >
+    update job_wanted
+    set user_id = #{userId,jdbcType=INTEGER},
+      job_cate_id = #{jobCateId,jdbcType=VARCHAR},
+      start_money = #{startMoney,jdbcType=DECIMAL},
+      end_money = #{endMoney,jdbcType=DECIMAL},
+      province_id = #{provinceId,jdbcType=INTEGER},
+      city_id = #{cityId,jdbcType=INTEGER},
+      country_id = #{countryId,jdbcType=INTEGER},
+      property = #{property,jdbcType=VARCHAR},
+      state = #{state,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.CompanyBillMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.CompanyBill" >
+    <constructor >
+      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="company_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="company_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="sum" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="paid" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="member_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, company_name, sum, paid, member_num, state, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from company_bill
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByPrimaryKey2" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from company_bill
+    where company_id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="findBycompanyBill" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from company_bill
+    <where>
+      1=1
+      <if test="id != null and id != ''">
+        and id = #{id}
+      </if>
+      <if test="companyName != null and companyName != ''">
+        and company_name like concat('%',#{companyName},'%')
+      </if>
+      <if test="state != null and state != ''">
+        and state = #{state}
+      </if>
+    </where>
+    ORDER BY create_time DESC
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from company_bill
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.czx.yimem.entity.CompanyBill" >
+    insert into company_bill (id, company_id, company_name,
+      sum, paid, member_num,
+      state, create_time, update_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{companyId,jdbcType=INTEGER}, #{companyName,jdbcType=VARCHAR},
+      #{sum,jdbcType=DECIMAL}, #{paid,jdbcType=DECIMAL}, #{memberNum,jdbcType=INTEGER},
+      #{state,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.czx.yimem.entity.CompanyBill" >
+    insert into company_bill
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="companyName != null" >
+        company_name,
+      </if>
+      <if test="sum != null" >
+        sum,
+      </if>
+      <if test="paid != null" >
+        paid,
+      </if>
+      <if test="memberNum != null" >
+        member_num,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+        create_time,
+        update_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="companyName != null" >
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="sum != null" >
+        #{sum,jdbcType=DECIMAL},
+      </if>
+      <if test="paid != null" >
+        #{paid,jdbcType=DECIMAL},
+      </if>
+      <if test="memberNum != null" >
+        #{memberNum,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      now(),
+      now(),
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.CompanyBill" >
+    update company_bill
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="companyName != null" >
+        company_name = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="sum != null" >
+        sum = #{sum,jdbcType=DECIMAL},
+      </if>
+      <if test="paid != null" >
+        paid = #{paid,jdbcType=DECIMAL},
+      </if>
+      <if test="memberNum != null" >
+        member_num = #{memberNum,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+        update_time = now(),
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.CompanyBill" >
+    update company_bill
+    set company_id = #{companyId,jdbcType=INTEGER},
+      company_name = #{companyName,jdbcType=VARCHAR},
+      sum = #{sum,jdbcType=DECIMAL},
+      paid = #{paid,jdbcType=DECIMAL},
+      member_num = #{memberNum,jdbcType=INTEGER},
+      state = #{state,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

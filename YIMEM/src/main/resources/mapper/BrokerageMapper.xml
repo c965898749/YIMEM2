@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.BrokerageMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.Brokerage" >
+    <constructor >
+      <idArg column="bro_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="referrer_id" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="total_money" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="referrer_num" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    bro_id, id, referrer_id, total_money, referrer_num, state
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from brokerage
+    where bro_id = #{broId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from brokerage
+    where bro_id = #{broId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.czx.yimem.entity.Brokerage" >
+    insert into brokerage (bro_id, id, referrer_id, 
+      total_money, referrer_num, state
+      )
+    values (#{broId,jdbcType=INTEGER}, #{id,jdbcType=INTEGER}, #{referrerId,jdbcType=VARCHAR}, 
+      #{totalMoney,jdbcType=DECIMAL}, #{referrerNum,jdbcType=TIMESTAMP}, #{state,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.czx.yimem.entity.Brokerage" >
+    insert into brokerage
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="broId != null" >
+        bro_id,
+      </if>
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="referrerId != null" >
+        referrer_id,
+      </if>
+      <if test="totalMoney != null" >
+        total_money,
+      </if>
+      <if test="referrerNum != null" >
+        referrer_num,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="broId != null" >
+        #{broId,jdbcType=INTEGER},
+      </if>
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="referrerId != null" >
+        #{referrerId,jdbcType=VARCHAR},
+      </if>
+      <if test="totalMoney != null" >
+        #{totalMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="referrerNum != null" >
+        #{referrerNum,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.Brokerage" >
+    update brokerage
+    <set >
+      <if test="id != null" >
+        id = #{id,jdbcType=INTEGER},
+      </if>
+      <if test="referrerId != null" >
+        referrer_id = #{referrerId,jdbcType=VARCHAR},
+      </if>
+      <if test="totalMoney != null" >
+        total_money = #{totalMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="referrerNum != null" >
+        referrer_num = #{referrerNum,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where bro_id = #{broId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.Brokerage" >
+    update brokerage
+    set id = #{id,jdbcType=INTEGER},
+      referrer_id = #{referrerId,jdbcType=VARCHAR},
+      total_money = #{totalMoney,jdbcType=DECIMAL},
+      referrer_num = #{referrerNum,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=VARCHAR}
+    where bro_id = #{broId,jdbcType=INTEGER}
+  </update>
+</mapper>

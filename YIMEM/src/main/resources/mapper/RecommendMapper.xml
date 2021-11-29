@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.RecommendMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.Recommend" >
+    <constructor >
+      <idArg column="re_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="job_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="re_user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="money" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="del_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    re_id, id, user_id, job_id, re_user_id, money, state, create_time,del_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from recommend
+    where re_id = #{reId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByDelId" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from recommend
+    where del_id = #{delId} and user_id=#{userId}
+  </select>
+
+
+  <select id="selectrecommend" resultType="java.lang.Integer">
+    select  count(1)    from recommend
+    where del_id = #{delId} and user_id=#{userId}
+  </select>
+
+  <select id="findByrecommend" resultType="com.czx.yimem.dto.RecommendVO" parameterType="com.czx.yimem.dto.RecommendVO" >
+     SELECT
+    r.user_id,r.re_user_id,r.re_id,CONCAT(u.user_name,'-',u.phone_num) as name ,
+    r.create_time ,j.`name` as jobName ,j.money , r.state,r.del_id from recommend r
+    LEFT JOIN `user` u on u.user_id=r.re_user_id
+    LEFT JOIN job j on j.job_id=r.job_id
+    <where>
+      <if test="name != null and name != ''">
+        and (u.user_name like  concat('%',#{name},'%') or u.phone_num =  #{name})
+      </if>
+      <if test="state != null and state != ''">
+        and r.state =#{state}
+      </if>
+      <if test="userId != null and userId != ''">
+        and r.user_id =#{userId}
+      </if>
+    </where>
+    ORDER BY r.create_time ASC
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from recommend
+    where re_id = #{reId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.czx.yimem.entity.Recommend" >
+    insert into recommend (re_id, id, user_id,
+      job_id, re_user_id, money,
+      state, create_time)
+    values (#{reId,jdbcType=INTEGER}, #{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+      #{jobId,jdbcType=INTEGER}, #{reUserId,jdbcType=INTEGER}, #{money,jdbcType=DECIMAL},
+      #{state,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="reId" parameterType="com.czx.yimem.entity.Recommend" >
+    insert into recommend
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="reId != null" >
+        re_id,
+      </if>
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="jobId != null" >
+        job_id,
+      </if>
+      <if test="reUserId != null" >
+        re_user_id,
+      </if>
+      <if test="money != null" >
+        money,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+        create_time,
+      <if test="delId != null" >
+        del_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="reId != null" >
+        #{reId,jdbcType=INTEGER},
+      </if>
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="jobId != null" >
+        #{jobId,jdbcType=INTEGER},
+      </if>
+      <if test="reUserId != null" >
+        #{reUserId,jdbcType=INTEGER},
+      </if>
+      <if test="money != null" >
+        #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+     now(),
+      <if test="delId != null" >
+        #{delId},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.Recommend" >
+    update recommend
+    <set >
+      <if test="id != null" >
+        id = #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="jobId != null" >
+        job_id = #{jobId,jdbcType=INTEGER},
+      </if>
+      <if test="reUserId != null" >
+        re_user_id = #{reUserId,jdbcType=INTEGER},
+      </if>
+      <if test="money != null" >
+        money = #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="delId != null" >
+        del_id = #{delId},
+      </if>
+      create_time=now(),
+    </set>
+    where re_id = #{reId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.Recommend" >
+    update recommend
+    set id = #{id,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      job_id = #{jobId,jdbcType=INTEGER},
+      re_user_id = #{reUserId,jdbcType=INTEGER},
+      money = #{money,jdbcType=DECIMAL},
+      state = #{state,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where re_id = #{reId,jdbcType=INTEGER}
+  </update>
+  <update id="updateiscount" parameterType="com.czx.yimem.entity.IncomeDetail" >
+    update recommend
+    set
+        state = 10
+    where del_id = #{devId}
+  </update>
+</mapper>

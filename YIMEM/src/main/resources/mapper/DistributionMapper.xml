@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.DistributionMapper">
+    <resultMap id="BaseResultMap" type="com.czx.yimem.entity.Distribution">
+        <constructor>
+            <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="card_url_a" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="card_url_b" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="apply_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="resion" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="name" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="phone" jdbcType="VARCHAR" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,
+        user_id,
+        card_url_a,
+        card_url_b,
+        state,
+        apply_time,
+        resion,
+        name,
+        phone
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from distribution
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByuserid" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from distribution
+        where user_id = #{id} and state=2
+    </select>
+
+    <select id="IsExist" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select count(*)
+        from distribution
+        where user_id = #{userId}
+          and state = 1
+    </select>
+    <select id="isdistribution" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select count(*)
+        from distribution
+        where user_id = #{userId}
+          and state = 2
+    </select>
+    <select id="findBydistribution" resultMap="BaseResultMap" parameterType="com.czx.yimem.entity.Jobhunter">
+        select
+        <include refid="Base_Column_List"/>
+        from distribution
+        <where>
+            1=1
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+        </where>
+        ORDER BY apply_time DESC
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from distribution
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.czx.yimem.entity.Distribution">
+        insert into distribution (id, user_id, card_url_a,
+                                  card_url_b, state, apply_time,
+                                  resion, name, phone)
+        values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{cardUrlA,jdbcType=VARCHAR},
+                #{cardUrlB,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{applyTime,jdbcType=TIMESTAMP},
+                #{resion,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.czx.yimem.entity.Distribution">
+        insert into distribution
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="cardUrlA != null">
+                card_url_a,
+            </if>
+            <if test="cardUrlB != null">
+                card_url_b,
+            </if>
+            apply_time,
+            <if test="name != null">
+                name,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="cardUrlA != null">
+                #{cardUrlA,jdbcType=VARCHAR},
+            </if>
+            <if test="cardUrlB != null">
+                #{cardUrlB,jdbcType=VARCHAR},
+            </if>
+            now(),
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.Distribution">
+        update distribution
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="cardUrlA != null">
+                card_url_a = #{cardUrlA,jdbcType=VARCHAR},
+            </if>
+            <if test="cardUrlB != null">
+                card_url_b = #{cardUrlB,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                state = #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="resion != null">
+                resion = #{resion,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.Distribution">
+        update distribution
+        set user_id    = #{userId,jdbcType=INTEGER},
+            card_url_a = #{cardUrlA,jdbcType=VARCHAR},
+            card_url_b = #{cardUrlB,jdbcType=VARCHAR},
+            state      = #{state,jdbcType=VARCHAR},
+            apply_time = #{applyTime,jdbcType=TIMESTAMP},
+            resion     = #{resion,jdbcType=VARCHAR},
+            name       = #{name,jdbcType=VARCHAR},
+            phone      = #{phone,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

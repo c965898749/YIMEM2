@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.czx.yimem.dao.DepartmentMapper">
+    <resultMap id="BaseResultMap" type="com.czx.yimem.entity.Department">
+        <constructor>
+            <idArg column="dep_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="f_dep_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="m_user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="state" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        dep_id,
+        id,
+        f_dep_id,
+        name,
+        m_user_id,
+        state,
+        create_time
+    </sql>
+
+
+    <select id="selectAllByState" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from rc_group
+        where state = #{state,jdbcType=INTEGER}
+    </select>
+
+    <select id="getAllBYid" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select dep_id
+        from rc_group
+        where f_dep_id = #{id}
+          and state = "1"
+    </select>
+
+    <select id="selectchild" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(*)
+        from rc_group
+        where f_dep_id = #{id}
+          and state = "1"
+    </select>
+
+    <select id="selectByMember" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT rc_group.*
+        from rc_group,
+             rc_group_men
+        where rc_group.dep_id = rc_group_men.dep_id
+          and rc_group_men.m_user_id = #{mid}
+    </select>
+
+    <select id="selectByfdep" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select *
+        from rc_group
+        where f_dep_id = #{id}
+          and state = "1"
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from rc_group
+        where dep_id = #{depId,jdbcType=INTEGER} and state = "1"
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from rc_group
+        where dep_id = #{depId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.czx.yimem.entity.Department" useGeneratedKeys="true" keyProperty="depId">
+        insert into rc_group (dep_id, id, f_dep_id,
+                              name, m_user_id, state,
+                              create_time)
+        values (#{depId,jdbcType=INTEGER}, #{id,jdbcType=INTEGER}, #{fDepId,jdbcType=INTEGER},
+                #{name,jdbcType=VARCHAR}, #{mUserId,jdbcType=INTEGER}, #{state,jdbcType=VARCHAR},
+                now())
+    </insert>
+    <insert id="insertSelective" parameterType="com.czx.yimem.entity.Department" useGeneratedKeys="true"
+            keyProperty="depId">
+        insert into rc_group
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="depId != null">
+                dep_id,
+            </if>
+            <if test="id != null">
+                id,
+            </if>
+            <if test="fDepId != null">
+                f_dep_id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="mUserId != null">
+                m_user_id,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="depId != null">
+                #{depId,jdbcType=INTEGER},
+            </if>
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="fDepId != null">
+                #{fDepId,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="mUserId != null">
+                #{mUserId,jdbcType=INTEGER},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=VARCHAR},
+            </if>
+            now(),
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.Department">
+        update rc_group
+        <set>
+            <if test="id != null">
+                id = #{id,jdbcType=INTEGER},
+            </if>
+            <if test="fDepId != null">
+                f_dep_id = #{fDepId,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="mUserId != null">
+                m_user_id = #{mUserId,jdbcType=INTEGER},
+            </if>
+            <if test="state != null">
+                state = #{state,jdbcType=VARCHAR},
+            </if>
+
+        </set>
+        where dep_id = #{depId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.Department">
+        update rc_group
+        set id        = #{id,jdbcType=INTEGER},
+            f_dep_id  = #{fDepId,jdbcType=INTEGER},
+            name      = #{name,jdbcType=VARCHAR},
+            m_user_id = #{mUserId,jdbcType=INTEGER},
+            state     = #{state,jdbcType=VARCHAR},
+            where dep_id = #{depId,jdbcType=INTEGER}
+    </update>
+</mapper>

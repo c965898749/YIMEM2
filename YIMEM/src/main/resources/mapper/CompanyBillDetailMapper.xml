@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.CompanyBillDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.CompanyBillDetail" >
+    <constructor >
+      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="user_phone" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="job_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="job_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="jab_cate_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="jab_cate_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="job_money" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="user_entry_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="company_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, user_name, user_phone, job_id, job_name, jab_cate_id, jab_cate_name,
+    job_money, user_entry_time, create_time, state,company_id
+  </sql>
+
+  <select id="findBycompanyBillDetail" resultMap="BaseResultMap" parameterType="com.czx.yimem.entity.CompanyBillDetail" >
+    select
+    c.id, c.user_id, c.user_name, c.user_phone, c.job_id, c.job_name, c.jab_cate_id,
+    c.job_money, c.user_entry_time, c.create_time, c.state,c.company_id,q.categoryname as jab_cate_name
+    from company_bill_detail c
+    LEFT JOIN job j on j.job_id=c.job_id
+    LEFT JOIN qs_category_jobs q on q.id=j.job_cate_id
+    <where>
+      1=1
+      <if test="companyId != null and companyId != ''">
+        and c.company_id = #{companyId}
+      </if>
+      <if test="userName != null and userName != ''">
+        and c.user_name like concat('%',#{userName},'%')
+      </if>
+      <if test="state != null and state != ''">
+        and c.state = #{state}
+      </if>
+    </where>
+    ORDER BY c.user_entry_time DESC
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from company_bill_detail
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+  <select id="findBycompanyId" resultType="com.czx.yimem.entity.CompanyBillDetail" parameterType="java.lang.Integer" >
+    select
+    *
+    from company_bill_detail
+    where company_id = #{companyId} and expend!=0
+    ORDER BY create_time asc
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from company_bill_detail
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.czx.yimem.entity.CompanyBillDetail" >
+    insert into company_bill_detail (id, user_id, user_name,
+      user_phone, job_id, job_name,
+      jab_cate_id, jab_cate_name, job_money,
+      user_entry_time, create_time, state
+      )
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR},
+      #{userPhone,jdbcType=VARCHAR}, #{jobId,jdbcType=INTEGER}, #{jobName,jdbcType=VARCHAR},
+      #{jabCateId,jdbcType=INTEGER}, #{jabCateName,jdbcType=VARCHAR}, #{jobMoney},
+      #{userEntryTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{state,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.czx.yimem.entity.CompanyBillDetail" >
+    insert into company_bill_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="userPhone != null" >
+        user_phone,
+      </if>
+      <if test="jobId != null" >
+        job_id,
+      </if>
+      <if test="jobName != null" >
+        job_name,
+      </if>
+      <if test="jabCateId != null" >
+        jab_cate_id,
+      </if>
+      <if test="jabCateName != null" >
+        jab_cate_name,
+      </if>
+      <if test="jobMoney != null" >
+        job_money,
+      </if>
+      <if test="userEntryTime != null" >
+        user_entry_time,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="expend != null" >
+        expend,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userPhone != null" >
+        #{userPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="jobId != null" >
+        #{jobId,jdbcType=INTEGER},
+      </if>
+      <if test="jobName != null" >
+        #{jobName,jdbcType=VARCHAR},
+      </if>
+      <if test="jabCateId != null" >
+        #{jabCateId,jdbcType=INTEGER},
+      </if>
+      <if test="jabCateName != null" >
+        #{jabCateName,jdbcType=VARCHAR},
+      </if>
+      <if test="jobMoney != null" >
+        #{jobMoney},
+      </if>
+      <if test="userEntryTime != null" >
+        #{userEntryTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="expend != null" >
+        #{expend},
+      </if>
+      <if test="companyId != null" >
+        #{companyId},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.CompanyBillDetail" >
+    update company_bill_detail
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userPhone != null" >
+        user_phone = #{userPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="jobId != null" >
+        job_id = #{jobId,jdbcType=INTEGER},
+      </if>
+      <if test="jobName != null" >
+        job_name = #{jobName,jdbcType=VARCHAR},
+      </if>
+      <if test="jabCateId != null" >
+        jab_cate_id = #{jabCateId,jdbcType=INTEGER},
+      </if>
+      <if test="jabCateName != null" >
+        jab_cate_name = #{jabCateName,jdbcType=VARCHAR},
+      </if>
+      <if test="jobMoney != null" >
+        job_money = #{jobMoney},
+      </if>
+      <if test="userEntryTime != null" >
+        user_entry_time = #{userEntryTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="expend != null" >
+        expend = #{expend},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.CompanyBillDetail" >
+    update company_bill_detail
+    set user_id = #{userId,jdbcType=INTEGER},
+      user_name = #{userName,jdbcType=VARCHAR},
+      user_phone = #{userPhone,jdbcType=VARCHAR},
+      job_id = #{jobId,jdbcType=INTEGER},
+      job_name = #{jobName,jdbcType=VARCHAR},
+      jab_cate_id = #{jabCateId,jdbcType=INTEGER},
+      jab_cate_name = #{jabCateName,jdbcType=VARCHAR},
+      job_money = #{jobMoney},
+      user_entry_time = #{userEntryTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

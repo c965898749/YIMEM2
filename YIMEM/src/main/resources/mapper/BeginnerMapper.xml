@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.BeginnerMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.Beginner" >
+    <constructor >
+      <idArg column="be_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="to_user" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="title" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="content" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="use_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    be_id, id, to_user, create_time, title, content, state,use_time
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from beginner
+    where be_id = #{beId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectBytouser" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from beginner
+    where to_user = #{touser} and state='1'
+  </select>
+
+
+  <select id="findBybeginner" resultMap="BaseResultMap" parameterType="com.czx.yimem.entity.Beginner" >
+    select
+    <include refid="Base_Column_List" />
+    from beginner
+    <where>
+      1=1
+      <if test="beId != null and beId != ''">
+        and be_id = #{beId}
+      </if>
+      <if test="title != null and title!=''">
+        and title like  concat('%',#{title},'%')
+      </if>
+      <if test="toUser != null and toUser != ''">
+        and to_user = #{toUser}
+      </if>
+      <if test="state != null and state != ''">
+        and state = #{state}
+      </if>
+    </where>
+    ORDER BY create_time DESC
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from beginner
+    where be_id = #{beId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.czx.yimem.entity.Beginner" >
+    insert into beginner (be_id, id, to_user,
+      create_time, title, content,
+      state,use_time)
+    values (#{beId,jdbcType=INTEGER}, #{id,jdbcType=INTEGER}, #{toUser,jdbcType=VARCHAR},
+      now(), #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
+      #{state,jdbcType=VARCHAR},#{useTime})
+  </insert>
+  <insert id="insertSelective" parameterType="com.czx.yimem.entity.Beginner"  useGeneratedKeys="true" keyProperty="beId">
+    insert into beginner
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="beId != null" >
+        be_id,
+      </if>
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="toUser != null" >
+        to_user,
+      </if>
+        create_time,
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="useTime != null" >
+        use_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="beId != null" >
+        #{beId,jdbcType=INTEGER},
+      </if>
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="toUser != null" >
+        #{toUser,jdbcType=VARCHAR},
+      </if>
+      now(),
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="useTime != null" >
+       #{useTime},
+      </if>
+    </trim>
+  </insert>
+
+
+  <select id="findTimeUpid" resultType="java.lang.Integer">
+    select
+    be_id
+    from beginner
+    WHERE NOW()>use_time and state='2';
+  </select>
+
+
+  <update id="updatefindTimeUp">
+    UPDATE `beginner` SET  `state`='1' WHERE be_id=#{id};
+  </update>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.Beginner" >
+    update beginner
+    <set >
+      <if test="id != null" >
+        id = #{id,jdbcType=INTEGER},
+      </if>
+      <if test="toUser != null" >
+        to_user = #{toUser,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="useTime != null" >
+        use_time= #{useTime},
+      </if>
+    </set>
+    where be_id = #{beId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.Beginner" >
+    update beginner
+    set id = #{id,jdbcType=INTEGER},
+      to_user = #{toUser,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      state = #{state,jdbcType=VARCHAR},
+        use_time= #{useTime}
+    where be_id = #{beId,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateState" parameterType="com.czx.yimem.entity.Beginner" >
+    update beginner as a ,(SELECT to_user from beginner WHERE be_id=#{beId}) b
+    set
+      a.state = '0'
+      where a.to_user = b.to_user  and a.state ='1' and a.be_id &lt;&gt; #{beId}
+  </update>
+</mapper>

@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.NewsMapper">
+    <resultMap id="BaseResultMap" type="com.czx.yimem.entity.News">
+        <constructor>
+            <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="title" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="content" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="to_user_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="job_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="isagree" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="devid" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="identity" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="isread" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="new_type" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,
+        user_id,
+        title,
+        content,
+        create_time,
+        to_user_id,
+        job_id,
+        state,
+        isagree,
+        devid,
+        identity,
+        isread,
+        new_type
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from news
+        where id = #{id,jdbcType=INTEGER} and state = "1"
+    </select>
+
+    <select id="selectByPrimaryKey2" resultType="com.czx.yimem.entity.News" parameterType="java.lang.Integer">
+        select *
+        from news
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="isnewmsg" resultType="java.lang.Integer">
+        SELECT count(1) from news
+        <where>
+            to_user_id=#{userId}
+            <if test="identity == 1 ">
+                and (identity=1 or identity=2)
+            </if>
+            <if test="identity == 2 ">
+                and (identity=1 or identity=2)
+            </if>
+            <if test="identity == 3 ">
+                and identity=3
+            </if>
+            and isread=1
+        </where>
+    </select>
+
+    <select id="findBynews" resultMap="BaseResultMap" parameterType="com.czx.yimem.entity.News">
+        select
+        <include refid="Base_Column_List"/>
+        from news
+        <where>
+            1=1
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+            <if test="toUserId != null and toUserId != ''">
+                and to_user_id = #{toUserId}
+            </if>
+            <if test="title != null and title != ''">
+                and title like concat('%',#{title},'%')
+            </if>
+            <if test="jobId != null and jobId != ''">
+                and job_id = #{jobId}
+            </if>
+            <if test="state != null and state != ''">
+                and state = #{state}
+            </if>
+            <if test="newType != null and newType != ''">
+                and new_type = #{newType}
+            </if>
+            <if test="identity == 3 ">
+                and identity = 3
+            </if>
+            <if test="identity == 2 ">
+                and ( identity = 2 or identity = 1 )
+            </if>
+            <if test="identity == 1 ">
+                and identity = 1
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from news
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.czx.yimem.entity.News">
+        insert into news (id, user_id, title,
+                          content, create_time, to_user_id,
+                          job_id, state)
+        values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR},
+                #{content,jdbcType=VARCHAR}, now(), #{toUserId,jdbcType=INTEGER},
+                #{jobId,jdbcType=INTEGER}, #{state,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.czx.yimem.entity.News">
+        insert into news
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            create_time,
+            <if test="toUserId != null">
+                to_user_id,
+            </if>
+            <if test="jobId != null">
+                job_id,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="isagree != null">
+                isagree,
+            </if>
+            <if test="devid != null">
+                devid,
+            </if>
+            <if test="identity != null">
+                identity,
+            </if>
+            <if test="devdeilId != null">
+                devdeil_id,
+            </if>
+            <if test="newType != null">
+                new_type,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            now(),
+            <if test="toUserId != null">
+                #{toUserId,jdbcType=INTEGER},
+            </if>
+            <if test="jobId != null">
+                #{jobId,jdbcType=INTEGER},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="isagree != null">
+                #{isagree},
+            </if>
+            <if test="devid != null">
+                #{devid},
+            </if>
+            <if test="identity != null">
+                #{identity},
+            </if>
+            <if test="devdeilId != null">
+                #{devdeilId},
+            </if>
+            <if test="newType != null">
+                #{newType},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.News">
+        update news
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="toUserId != null">
+                to_user_id = #{toUserId,jdbcType=INTEGER},
+            </if>
+            <if test="jobId != null">
+                job_id = #{jobId,jdbcType=INTEGER},
+            </if>
+            <if test="state != null">
+                state = #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="isagree != null">
+                isagree = #{isagree},
+            </if>
+            <if test="devid != null">
+                devid = #{devid},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.News">
+        update news
+        set user_id    = #{userId,jdbcType=INTEGER},
+            title      = #{title,jdbcType=VARCHAR},
+            content    = #{content,jdbcType=VARCHAR},
+            to_user_id = #{toUserId,jdbcType=INTEGER},
+            job_id     = #{jobId,jdbcType=INTEGER},
+            state      = #{state,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updatesiread" parameterType="com.czx.yimem.entity.News">
+        update news
+        set isread = 0
+        where to_user_id = #{toUserId} and identity=#{identity}
+        <if test="id != null">
+            and id = #{id}
+        </if>
+    </update>
+    <update id="updatesiagree" parameterType="com.czx.yimem.entity.News">
+        update news
+        set isagree = 4
+        where to_user_id = #{toUserId}
+          and identity = 1
+          and devid = #{devid}
+    </update>
+</mapper>

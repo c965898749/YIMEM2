@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.WithdrawRuleMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.WithdrawRule" >
+    <constructor >
+      <idArg column="wi_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="to_user" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="title" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="content" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="use_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    wi_id, id, to_user, create_time, title, content, use_time, state
+  </sql>
+
+  <select id="findByWithdrawRule" resultMap="BaseResultMap" parameterType="com.czx.yimem.entity.WithdrawRule" >
+    select
+    <include refid="Base_Column_List" />
+    from withdraw_rule
+    <where>
+      1=1
+      <if test="wiId != null and wiId != ''">
+        and wi_id = #{wiId}
+      </if>
+      <if test="title != null and title!=''">
+        and title like  concat('%',#{title},'%')
+      </if>
+      <if test="toUser != null and toUser != ''">
+        and to_user = #{toUser}
+      </if>
+      <if test="state != null and state != ''">
+        and state = #{state}
+      </if>
+    </where>
+    ORDER BY create_time DESC
+  </select>
+
+  <select id="findTimeUpid" resultType="java.lang.Integer">
+    select
+      wi_id    from withdraw_rule
+    WHERE NOW()>use_time and state='2'
+  </select>
+
+
+  <update id="updatefindTimeUp">
+    UPDATE `withdraw_rule` SET  `state`='1' WHERE wi_id=#{id};
+  </update>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from withdraw_rule
+    where wi_id = #{wiId,jdbcType=INTEGER}
+  </select>
+
+
+  <select id="selectBytouser" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from withdraw_rule
+    where state = '1'
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from withdraw_rule
+    where wi_id = #{wiId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.czx.yimem.entity.WithdrawRule" >
+    insert into withdraw_rule (wi_id, id, to_user,
+      create_time, title, content,
+      use_time, state)
+    values (#{wiId,jdbcType=INTEGER}, #{id,jdbcType=INTEGER}, #{toUser,jdbcType=VARCHAR},
+      now(), #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
+      #{useTime,jdbcType=TIMESTAMP}, #{state,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.czx.yimem.entity.WithdrawRule" >
+    insert into withdraw_rule
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="wiId != null" >
+        wi_id,
+      </if>
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="toUser != null" >
+        to_user,
+      </if>
+        create_time,
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="useTime != null" >
+        use_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="wiId != null" >
+        #{wiId,jdbcType=INTEGER},
+      </if>
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="toUser != null" >
+        #{toUser,jdbcType=VARCHAR},
+      </if>
+      now(),
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="useTime != null" >
+        #{useTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.WithdrawRule" >
+    update withdraw_rule
+    <set >
+      <if test="id != null" >
+        id = #{id,jdbcType=INTEGER},
+      </if>
+      <if test="toUser != null" >
+        to_user = #{toUser,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="useTime != null" >
+        use_time = #{useTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where wi_id = #{wiId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.WithdrawRule" >
+    update withdraw_rule
+    set id = #{id,jdbcType=INTEGER},
+      to_user = #{toUser,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      use_time = #{useTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=VARCHAR}
+    where wi_id = #{wiId,jdbcType=INTEGER}
+  </update>
+
+
+  <update id="updateState" parameterType="com.czx.yimem.entity.WithdrawRule" >
+    update withdraw_rule
+    set
+        state = '0'
+    where state='1'
+  </update>
+</mapper>

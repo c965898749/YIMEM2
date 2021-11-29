@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.IncomeDetailMapper">
+    <resultMap id="BaseResultMap" type="com.czx.yimem.entity.IncomeDetail">
+        <constructor>
+            <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="created_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="money" jdbcType="DECIMAL" javaType="java.math.BigDecimal"/>
+            <arg column="job_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="brokerage" jdbcType="DECIMAL" javaType="java.math.BigDecimal"/>
+            <arg column="r_user_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="user_name" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="r_user_name" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="phone" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="r_phone" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="entry_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="company_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="job_name" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="company_name" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="expend" jdbcType="DECIMAL" javaType="java.math.BigDecimal"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,
+        user_id,
+        created_time,
+        money,
+        job_id,
+        brokerage,
+        r_user_id,
+        user_name,
+        r_user_name,
+        phone,
+        r_phone,
+        entry_time,
+        company_id,
+        job_name,
+        company_name,
+        expend
+    </sql>
+
+    <select id="findByIncomeDetail" resultType="com.czx.yimem.entity.IncomeDetail"
+            parameterType="com.czx.yimem.entity.IncomeDetail">
+        select
+        <include refid="Base_Column_List"/>
+        from income_detail
+        <where>
+            1=1
+            <if test="userId != null and userId != ''">
+                and user_id =#{userId}
+            </if>
+            <if test="userName != null and userName != ''">
+                and user_name like concat('%',#{userName},'%')
+            </if>
+            <if test="rUserName != null and rUserName != ''">
+                and r_user_name like concat('%',#{rUserName},'%')
+            </if>
+            <if test="companyName != null and companyName != ''">
+                and company_name like concat('%',#{companyName},'%')
+            </if>
+            <if test="startTime != null">
+                and created_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and created_time &lt;= #{endTime}
+            </if>
+        </where>
+        ORDER BY created_time DESC
+    </select>
+
+    <select id="findByTime" resultType="com.czx.yimem.dto.IncomeDetailVO" parameterType="com.czx.yimem.dto.IncomeDetailVO">
+        select a.id,DATE_FORMAT(a.entry_time,'%Y-%m') as time ,SUM(a.brokerage) as totalmoney,a.user_id
+        from income_detail a
+        where user_id=#{userId}
+        group by DATE_FORMAT(a.entry_time,'%Y-%m')
+        ORDER BY entry_time DESC
+    </select>
+
+    <select id="getnewincomeDetails" resultType="com.czx.yimem.dto.IncomeDetailVOs">
+        select *
+        from income_detail
+        ORDER BY entry_time DESC limit 10
+    </select>
+
+
+
+    <select id="selectincomeDetailsBytime" resultType="com.czx.yimem.entity.IncomeDetail" parameterType="com.czx.yimem.dto.IncomeDetailVO">
+        select
+            *
+        from income_detail
+        where entry_time like  concat('%',#{time},'%') and user_id=#{userId}
+        ORDER BY entry_time DESC
+    </select>
+
+
+    <select id="findIncomeDetail" resultType="com.czx.yimem.entity.IncomeDetail" parameterType="java.lang.Integer">
+        SELECT d.dev_id,d.re_user_id as user_id ,
+               c.money,d.job_id,c.brokerage,d.user_id as r_user_id,
+               u.user_name,u2.user_name as r_user_name,u.phone_num as phone,
+               u2.phone_num as r_phone,d1.entry_time,j.company_id,j.`name` as job_name
+                ,e.`name` as company_name,c.brokerage as expend
+        from deliver d
+             LEFT JOIN deliver_detail d1 on d1.dev_id=d.dev_id
+            LEFT JOIN job j ON j.job_id=d.job_id
+            LEFT JOIN job_category c on c.job_cate_id = j.job_cate_id
+            LEFT JOIN `user` u on u.user_id=d.re_user_id
+            LEFT JOIN `user` u2 on u2.user_id=d.user_id
+            LEFT JOIN company e on e.company_id=j.company_id
+        where d.is_recommend=1  and d.is_ru_income=0 and d.state= 7
+            and TIMESTAMPDIFF(DAY,d1.entry_time,now())  >  #{day}
+    </select>
+
+    <select id="findIncomeDetail2" resultType="com.czx.yimem.entity.IncomeDetail" parameterType="java.lang.Integer">
+        SELECT d.dev_id,d.re_user_id as user_id ,
+               c.money,d.job_id,c.brokerage,d.user_id as r_user_id,
+               u.user_name,u2.user_name as r_user_name,u.phone_num as phone,
+               u2.phone_num as r_phone,d1.entry_time,j.company_id,j.`name` as job_name
+                ,e.`name` as company_name,c.brokerage as expend
+        from deliver d
+             LEFT JOIN deliver_detail d1 on d1.dev_id=d.dev_id
+            LEFT JOIN job j ON j.job_id=d.job_id
+            LEFT JOIN job_category c on c.job_cate_id = j.job_cate_id
+            LEFT JOIN `user` u on u.user_id=d.re_user_id
+            LEFT JOIN `user` u2 on u2.user_id=d.user_id
+            LEFT JOIN company e on e.company_id=j.company_id
+        where d.is_recommend=0  and d.is_ru_income=0 and d.state= 7
+            and TIMESTAMPDIFF(DAY,d1.entry_time,now())  > #{day}
+    </select>
+
+
+    <select id="findbrokerageRankingList" resultType="com.czx.yimem.dto.BrokerageRankingList" parameterType="com.czx.yimem.dto.BrokerageRankingList">
+        SET @crank = 0;
+        SELECT
+            @crank := @crank + 1 AS id,b.a as money,b.user_id,b.user_name
+        FROM
+            (SELECT user_id,user_name,SUM(brokerage)as a from income_detail
+        <where>
+            1=1
+            <if test="ranking == 0">
+              and  YEARWEEK(date_format(created_time,'%Y-%m-%d')) = YEARWEEK(now())
+            </if>
+            <if test="ranking == 1">
+                and  date_format(created_time,'%Y-%m')=date_format(now(),'%Y-%m')
+            </if>
+        </where>
+             GROUP BY user_id ORDER BY a DESC LIMIT 10) b
+    </select>
+
+
+    <select id="findInterviewRankingList" resultType="com.czx.yimem.dto.InterviewRankingList" parameterType="com.czx.yimem.dto.InterviewRankingList">
+        SET @crank = 0;
+        SELECT
+        @crank := @crank + 1 AS id,b.a as peoplenum,b.user_id,b.user_name
+        FROM
+        (
+        SELECT
+        rd.user_id,
+        ur.user_name,
+        COUNT(*) AS a
+        FROM
+        recommend rd
+        LEFT JOIN deliver_detail ddl ON rd.del_id = ddl.dev_id
+        LEFT JOIN `user` ur ON ur.user_id = rd.user_id
+        <where>
+            <if test="ranking == 0">
+                YEARWEEK(date_format(ddl.create_time,'%Y-%m-%d')) = YEARWEEK(now())
+            </if>
+            <if test="ranking == 1">
+                date_format(ddl.create_time, '%Y-%m') = date_format(now(), '%Y-%m')
+            </if>
+            AND ddl.state = 4
+        </where>
+        GROUP BY
+        rd.user_id
+        ORDER BY
+        a DESC
+        LIMIT 10
+            ) b
+    </select>
+
+    <select id="findRecommendRankingList" resultType="com.czx.yimem.dto.RecommendRankingList" parameterType="com.czx.yimem.dto.RecommendRankingList">
+        SET @crank = 0;
+        SELECT
+        @crank := @crank + 1 AS id,b.a as peoplenum,b.user_id,b.user_name
+        FROM
+        (
+        SELECT
+        rd.user_id,
+        ur.user_name,
+        COUNT(*) AS a
+        FROM
+        recommend rd
+        LEFT JOIN deliver_detail ddl ON rd.del_id = ddl.dev_id
+        LEFT JOIN `user` ur ON ur.user_id = rd.user_id
+        <where>
+            <if test="ranking == 0">
+                YEARWEEK(date_format(ddl.create_time,'%Y-%m-%d')) = YEARWEEK(now())
+            </if>
+            <if test="ranking == 1">
+                date_format(ddl.create_time, '%Y-%m') = date_format(now(), '%Y-%m')
+            </if>
+            AND ddl.state = 1
+        </where>
+        GROUP BY
+        rd.user_id
+        ORDER BY
+        a DESC
+        LIMIT 10
+        ) b
+    </select>
+
+    <select id="findbrokerageRankingListbyuserId" resultType="com.czx.yimem.dto.BrokerageRankingList" parameterType="com.czx.yimem.dto.BrokerageRankingList">
+        SET @crank = 0;
+        SELECT * FROM ( SELECT
+        @crank := @crank + 1 AS id,b.a as money,b.user_id,b.user_name
+        FROM
+        (SELECT user_id,user_name,SUM(brokerage)as a from income_detail
+        <where>
+            <if test="ranking == 0">
+                YEARWEEK(date_format(created_time,'%Y-%m-%d')) = YEARWEEK(now())
+            </if>
+            <if test="ranking == 1">
+                date_format(created_time,'%Y-%m')=date_format(now(),'%Y-%m')
+            </if>
+        </where>
+        GROUP BY user_id ORDER BY a DESC LIMIT 10) b)c where c.user_id =#{userId}
+    </select>
+
+    <select id="findInterviewRankingListbyuserId" resultType="com.czx.yimem.dto.InterviewRankingList" parameterType="com.czx.yimem.dto.InterviewRankingList">
+
+        SET @crank = 0;
+
+        SELECT
+            *
+        FROM
+            (
+                SELECT
+                    @crank := @crank + 1 AS id,
+                    b.a AS peoplenum,
+                    b.user_id,
+                    b.user_name
+                FROM
+                    (
+                        SELECT
+                            rd.user_id,
+                            ur.user_name,
+                            COUNT(*) AS a
+                        FROM
+                            recommend rd
+                                LEFT JOIN deliver_detail ddl ON rd.del_id = ddl.dev_id
+                                LEFT JOIN `user` ur ON ur.user_id = rd.user_id
+                        <where>
+                            <if test="ranking == 0">
+                                YEARWEEK(date_format(ddl.create_time,'%Y-%m-%d')) = YEARWEEK(now())
+                            </if>
+                            <if test="ranking == 1">
+                                date_format(ddl.create_time, '%Y-%m') = date_format(now(), '%Y-%m')
+                            </if>
+                            AND ddl.state = 4
+                        </where>
+                        GROUP BY
+                            rd.user_id
+                        ORDER BY
+                            a DESC
+                        LIMIT 10
+                    ) b
+            ) c
+        WHERE
+            c.user_id = #{userId}
+    </select>
+
+
+    <select id="findRecommendRankingListbyuserId" resultType="com.czx.yimem.dto.RecommendRankingList" parameterType="com.czx.yimem.dto.RecommendRankingList">
+
+        SET @crank = 0;
+
+        SELECT
+        *
+        FROM
+        (
+        SELECT
+        @crank := @crank + 1 AS id,
+        b.a AS peoplenum,
+        b.user_id,
+        b.user_name
+        FROM
+        (
+        SELECT
+        rd.user_id,
+        ur.user_name,
+        COUNT(*) AS a
+        FROM
+        recommend rd
+        LEFT JOIN deliver_detail ddl ON rd.del_id = ddl.dev_id
+        LEFT JOIN `user` ur ON ur.user_id = rd.user_id
+        <where>
+            <if test="ranking == 0">
+                YEARWEEK(date_format(ddl.create_time,'%Y-%m-%d')) = YEARWEEK(now())
+            </if>
+            <if test="ranking == 1">
+                date_format(ddl.create_time, '%Y-%m') = date_format(now(), '%Y-%m')
+            </if>
+            AND ddl.state = 1
+        </where>
+        GROUP BY
+        rd.user_id
+        ORDER BY
+        a DESC
+        LIMIT 10
+        ) b
+        ) c
+        WHERE
+        c.user_id = #{userId}
+    </select>
+
+    <select id="findByIncomeDetail2" resultType="com.czx.yimem.entity.IncomeDetail" parameterType="java.lang.Integer">
+
+        select
+        <include refid="Base_Column_List"/>
+        from income_detail i
+        where i.user_id =#{userId} and i.expend!=0
+        ORDER BY i.created_time asc
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from income_detail
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+
+    <select id="selectBydelid" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from income_detail
+        where dev_id = #{id} limit 1
+    </select>
+
+    <select id="selectSumincomeDetail" resultType="java.math.BigDecimal" parameterType="java.lang.Integer">
+        select SUM(i.expend)
+        from income_detail i
+        where user_id = #{userId}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from income_detail
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.czx.yimem.entity.IncomeDetail">
+        insert into income_detail (id, user_id, created_time,
+                                   money, job_id, brokerage,
+                                   r_user_id, user_name, r_user_name,
+                                   phone, r_phone, entry_time,
+                                   company_id, job_name, company_name)
+        values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP},
+                #{money,jdbcType=DECIMAL}, #{jobId,jdbcType=INTEGER}, #{brokerage,jdbcType=DECIMAL},
+                #{rUserId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{rUserName,jdbcType=VARCHAR},
+                #{phone,jdbcType=VARCHAR}, #{rPhone,jdbcType=VARCHAR}, #{entryTime,jdbcType=TIMESTAMP},
+                #{companyId,jdbcType=INTEGER}, #{jobName,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.czx.yimem.entity.IncomeDetail">
+        insert into income_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            created_time,
+            <if test="money != null">
+                money,
+            </if>
+            <if test="jobId != null">
+                job_id,
+            </if>
+            <if test="brokerage != null">
+                brokerage,
+            </if>
+            <if test="rUserId != null">
+                r_user_id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="rUserName != null">
+                r_user_name,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="rPhone != null">
+                r_phone,
+            </if>
+                entry_time,
+            <if test="companyId != null">
+                company_id,
+            </if>
+            <if test="jobName != null">
+                job_name,
+            </if>
+            <if test="companyName != null">
+                company_name,
+            </if>
+            <if test="expend != null">
+                expend,
+            </if>
+            <if test="devId != null">
+                dev_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            now(),
+            <if test="money != null">
+                #{money,jdbcType=DECIMAL},
+            </if>
+            <if test="jobId != null">
+                #{jobId,jdbcType=INTEGER},
+            </if>
+            <if test="brokerage != null">
+                #{brokerage,jdbcType=DECIMAL},
+            </if>
+            <if test="rUserId != null">
+                #{rUserId,jdbcType=INTEGER},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="rUserName != null">
+                #{rUserName,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="rPhone != null">
+                #{rPhone,jdbcType=VARCHAR},
+            </if>
+            now(),
+            <if test="companyId != null">
+                #{companyId,jdbcType=INTEGER},
+            </if>
+            <if test="jobName != null">
+                #{jobName,jdbcType=VARCHAR},
+            </if>
+            <if test="companyName != null">
+                #{companyName,jdbcType=VARCHAR},
+            </if>
+            <if test="expend != null">
+                #{expend},
+            </if>
+            <if test="devId != null">
+                #{devId},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.IncomeDetail">
+        update income_detail
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="money != null">
+                money = #{money,jdbcType=DECIMAL},
+            </if>
+            <if test="jobId != null">
+                job_id = #{jobId,jdbcType=INTEGER},
+            </if>
+            <if test="brokerage != null">
+                brokerage = #{brokerage,jdbcType=DECIMAL},
+            </if>
+            <if test="rUserId != null">
+                r_user_id = #{rUserId,jdbcType=INTEGER},
+            </if>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="rUserName != null">
+                r_user_name = #{rUserName,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="rPhone != null">
+                r_phone = #{rPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="companyId != null">
+                company_id = #{companyId,jdbcType=INTEGER},
+            </if>
+            <if test="jobName != null">
+                job_name = #{jobName,jdbcType=VARCHAR},
+            </if>
+            <if test="companyName != null">
+                company_name = #{companyName,jdbcType=VARCHAR},
+            </if>
+            <if test="expend != null">
+                expend = #{expend},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.IncomeDetail">
+        update income_detail
+        set user_id      = #{userId,jdbcType=INTEGER},
+            created_time = #{createdTime,jdbcType=TIMESTAMP},
+            money        = #{money,jdbcType=DECIMAL},
+            job_id       = #{jobId,jdbcType=INTEGER},
+            brokerage    = #{brokerage,jdbcType=DECIMAL},
+            r_user_id    = #{rUserId,jdbcType=INTEGER},
+            user_name    = #{userName,jdbcType=VARCHAR},
+            r_user_name  = #{rUserName,jdbcType=VARCHAR},
+            phone        = #{phone,jdbcType=VARCHAR},
+            r_phone      = #{rPhone,jdbcType=VARCHAR},
+            entry_time   = #{entryTime,jdbcType=TIMESTAMP},
+            company_id   = #{companyId,jdbcType=INTEGER},
+            job_name     = #{jobName,jdbcType=VARCHAR},
+            company_name = #{companyName,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

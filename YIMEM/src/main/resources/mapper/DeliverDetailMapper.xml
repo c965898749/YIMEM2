@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.DeliverDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.DeliverDetail" >
+    <constructor >
+      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="dev_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="remark" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="resion" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="adress" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="phone" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="flag" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="entry_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="leave_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="is_ru_income" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, dev_id, state, create_time, remark, resion,adress,time,phone,flag,entry_time,leave_time,is_ru_income
+  </sql>
+
+  <select id="findcompanyuserid" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    SELECT u.user_id from `user` u
+    LEFT JOIN company c on c.phone = u.phone_num
+    LEFT JOIN job j on j.company_id =c.company_id
+    LEFT JOIN deliver d on d.job_id=j.job_id
+    WHERE d.dev_id=#{devId}
+  </select>
+
+  <select id="findUserid" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    SELECT d.user_id from  deliver d
+    WHERE d.dev_id=#{devId}
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from deliver_detail
+    where id = #{id,jdbcType=INTEGER}  and state = "1"
+  </select>
+
+
+  <select id="findmanshVO" resultType="com.czx.yimem.dto.ManshVO" parameterType="java.lang.Integer" >
+    select *
+    from deliver_detail
+    where dev_id = #{id} and state="2"
+    ORDER BY create_time DESC
+    LIMIT 1
+  </select>
+
+  <select id="selectByPrimaryKey2" resultType="com.czx.yimem.entity.DeliverDetail" parameterType="java.lang.Integer" >
+    select *
+    from deliver_detail
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+  <select id="selectByPrimaryKey11" resultType="com.czx.yimem.entity.DeliverDetail" parameterType="java.lang.Integer" >
+    select *
+    from deliver_detail
+    where dev_id = #{id}
+    ORDER BY create_time DESC
+    LIMIT 1
+  </select>
+  <select id="findstate" resultType="java.lang.String" parameterType="java.lang.Integer" >
+    select state
+    from deliver
+    where dev_id = #{devId}
+  </select>
+
+  <select id="selectBydevId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from deliver_detail
+    where dev_id = #{devId,jdbcType=INTEGER}  and state = "3"
+  </select>
+
+  <select id="findBydevId" resultType="com.czx.yimem.entity.DeliverDetail" parameterType="java.lang.Integer" >
+    select
+     *
+    from deliver_detail
+    where dev_id = #{devId,jdbcType=INTEGER}
+    ORDER BY create_time ASC
+  </select>
+
+  <select id="findBydeliverDetail" resultMap="BaseResultMap" parameterType="com.czx.yimem.entity.DeliverDetail" >
+    select
+    <include refid="Base_Column_List" />
+    from deliver_detail
+    <where>
+      1=1
+      <if test="id != null and id != ''">
+        and id = #{id}
+      </if>
+      <if test="devId != null and devId != ''">
+        and dev_id = #{devId}
+      </if>
+    </where>
+    ORDER BY create_time ASC
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from deliver_detail
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteBystate3" parameterType="java.lang.Integer" >
+    delete from deliver_detail
+    where dev_id = #{devId} and state=3
+  </delete>
+  <insert id="insert" parameterType="com.czx.yimem.entity.DeliverDetail" >
+    insert into deliver_detail (id, dev_id, state,
+      create_time, remark, resion
+      )
+    values (#{id,jdbcType=INTEGER}, #{devId,jdbcType=INTEGER}, #{state,jdbcType=VARCHAR},
+            now(), #{remark,jdbcType=VARCHAR}, #{resion,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective"  useGeneratedKeys="true" keyProperty="id" parameterType="com.czx.yimem.entity.DeliverDetail" >
+    insert into deliver_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="devId != null" >
+        dev_id,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+        create_time,
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="resion != null" >
+        resion,
+      </if>
+      <if test="adress != null" >
+        adress,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="entryTime != null" >
+        entry_time,
+      </if>
+      <if test="leaveTime != null" >
+        leave_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="devId != null" >
+        #{devId,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      now(),
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="resion != null" >
+        #{resion,jdbcType=VARCHAR},
+      </if>
+      <if test="adress != null" >
+        #{adress,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        #{time},
+      </if>
+      <if test="phone != null" >
+        #{phone},
+      </if>
+      <if test="entryTime != null" >
+        #{entryTime},
+      </if>
+      <if test="leaveTime != null" >
+        #{leaveTime},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.DeliverDetail" >
+    update deliver_detail
+    <set >
+      <if test="devId != null" >
+        dev_id = #{devId,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="resion != null" >
+        resion = #{resion,jdbcType=VARCHAR},
+      </if>
+      <if test="adress != null" >
+        adress=  #{adress,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null" >
+        flag=  #{flag},
+      </if>
+      <if test="time != null" >
+        time=  #{time},
+      </if>
+      <if test="phone != null" >
+        phone=  #{phone},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.DeliverDetail" >
+    update deliver_detail
+    set dev_id = #{devId,jdbcType=INTEGER},
+      state = #{state,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      resion = #{resion,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateisRuIncome" parameterType="java.lang.Integer" >
+    update deliver
+    set is_ru_income = 2
+    where dev_id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateisRuIncome2" parameterType="java.lang.Integer" >
+    update deliver
+    set is_ru_income = 0
+    where dev_id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updatestate3for6" parameterType="java.lang.Integer" >
+    update deliver_detail
+    set state = 6
+    where dev_id = #{devId} and state=3
+  </update>
+</mapper>

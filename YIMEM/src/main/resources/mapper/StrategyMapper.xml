@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.StrategyMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.Strategy" >
+    <constructor >
+      <idArg column="st_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="to_user" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="title" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="content" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="use_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="read_count" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="introduction" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="image" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    st_id, id, to_user, create_time, title, content, use_time, read_count, state,introduction,image
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from strategy
+    where st_id = #{stId,jdbcType=INTEGER}
+  </select>
+
+  <update id="updateReadcount" parameterType="java.lang.Integer">
+    update strategy
+    set read_count = read_count+1
+    where st_id = #{stId}
+  </update>
+  <select id="findBycomplain" resultType="com.czx.yimem.entity.Strategy" parameterType="com.czx.yimem.entity.Strategy" >
+    select
+    st_id, id, to_user, create_time, title, use_time, read_count, state,introduction,image
+    from strategy
+    <where>
+      1=1
+      <if test="toUser != null and toUser != ''">
+        and to_user = #{toUser}
+      </if>
+      <if test="stId != null and stId != ''">
+        and st_id = #{stId}
+      </if>
+      <if test="startTime != null and startTime != '' ">
+        and DATE_FORMAT(create_time,'%Y-%m-%d') &gt;=  #{startTime}
+      </if>
+      <if test="endTime != null and endTime != '' ">
+        and DATE_FORMAT(create_time,'%Y-%m-%d') &lt;=  #{endTime}
+      </if>
+      <if test="title != null and title != ''">
+        and title like  concat('%',#{title},'%')
+      </if>
+      <if test="state != null and state != ''">
+        and state = #{state}
+      </if>
+    </where>
+    ORDER BY create_time DESC
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from strategy
+    where st_id = #{stId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.czx.yimem.entity.Strategy" >
+    insert into strategy (st_id, id, to_user,
+      create_time, title, content,
+      use_time, read_count, state
+      )
+    values (#{stId,jdbcType=INTEGER}, #{id,jdbcType=INTEGER}, #{toUser,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP}, #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
+      #{useTime,jdbcType=TIMESTAMP}, #{readCount,jdbcType=INTEGER}, #{state,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.czx.yimem.entity.Strategy" >
+    insert into strategy
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="stId != null" >
+        st_id,
+      </if>
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="toUser != null" >
+        to_user,
+      </if>
+        create_time,
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="useTime != null" >
+        use_time,
+      </if>
+      <if test="introduction != null" >
+        introduction ,
+      </if>
+      <if test="image != null" >
+        image,
+      </if>
+      <if test="readCount != null" >
+        read_count,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="stId != null" >
+        #{stId,jdbcType=INTEGER},
+      </if>
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="toUser != null" >
+        #{toUser,jdbcType=VARCHAR},
+      </if>
+       now(),
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="useTime != null" >
+        #{useTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="introduction != null" >
+       #{introduction},
+      </if>
+      <if test="image != null" >
+        #{image},
+      </if>
+      <if test="readCount != null" >
+        #{readCount,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.Strategy" >
+    update strategy
+    <set >
+      <if test="id != null" >
+        id = #{id,jdbcType=INTEGER},
+      </if>
+      <if test="toUser != null" >
+        to_user = #{toUser,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="useTime != null" >
+        use_time = #{useTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="readCount != null" >
+        read_count = #{readCount,jdbcType=INTEGER},
+      </if>
+      <if test="introduction != null" >
+        introduction = #{introduction},
+      </if>
+      <if test="image != null" >
+        image = #{image},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where st_id = #{stId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.Strategy" >
+    update strategy
+    set id = #{id,jdbcType=INTEGER},
+      to_user = #{toUser,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      use_time = #{useTime,jdbcType=TIMESTAMP},
+      read_count = #{readCount,jdbcType=INTEGER},
+      state = #{state,jdbcType=VARCHAR}
+    where st_id = #{stId,jdbcType=INTEGER}
+  </update>
+
+
+
+
+
+  <update id="updatefindTimeUp">
+    UPDATE strategy SET  `state`='1' WHERE NOW()>use_time and state='2';
+  </update>
+</mapper>

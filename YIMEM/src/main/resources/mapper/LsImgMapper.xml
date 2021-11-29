@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.LsImgMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.LsImg" >
+    <constructor >
+      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="image_url" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="short_url" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="real_path" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, image_url, name, short_url, real_path, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from ls_img
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+  <select id="updatefindTimeUp" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+      *
+    from ls_img
+    where create_time >= now() + INTERVAL '1' DAY
+  </select>
+
+  <select id="selectByurl" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    select
+    id
+    from ls_img
+    where short_url = #{shortUrl}
+    ORDER BY create_time DESC
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ls_img
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.czx.yimem.entity.LsImg" >
+    insert into ls_img (id, image_url, name,
+      short_url, real_path, create_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{imageUrl,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+      #{shortUrl,jdbcType=VARCHAR}, #{realPath,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.czx.yimem.entity.LsImg" >
+    insert into ls_img
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="imageUrl != null" >
+        image_url,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="shortUrl != null" >
+        short_url,
+      </if>
+      <if test="realPath != null" >
+        real_path,
+      </if>
+        create_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="imageUrl != null" >
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="shortUrl != null" >
+        #{shortUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="realPath != null" >
+        #{realPath,jdbcType=VARCHAR},
+      </if>
+     now(),
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.LsImg" >
+    update ls_img
+    <set >
+      <if test="imageUrl != null" >
+        image_url = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="shortUrl != null" >
+        short_url = #{shortUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="realPath != null" >
+        real_path = #{realPath,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.LsImg" >
+    update ls_img
+    set image_url = #{imageUrl,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      short_url = #{shortUrl,jdbcType=VARCHAR},
+      real_path = #{realPath,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

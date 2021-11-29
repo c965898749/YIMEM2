@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.RevenueManagementMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.RevenueManagement" >
+    <constructor >
+      <idArg column="rev_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="company_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="predict_money" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="reality_money" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="entry_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    rev_id, id, company_id, predict_money, reality_money, entry_num, state
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from revenue_management
+    where rev_id = #{revId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from revenue_management
+    where rev_id = #{revId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.czx.yimem.entity.RevenueManagement" >
+    insert into revenue_management (rev_id, id, company_id, 
+      predict_money, reality_money, entry_num, 
+      state)
+    values (#{revId,jdbcType=INTEGER}, #{id,jdbcType=INTEGER}, #{companyId,jdbcType=INTEGER}, 
+      #{predictMoney,jdbcType=DECIMAL}, #{realityMoney,jdbcType=DECIMAL}, #{entryNum,jdbcType=INTEGER}, 
+      #{state,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.czx.yimem.entity.RevenueManagement" >
+    insert into revenue_management
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="revId != null" >
+        rev_id,
+      </if>
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="predictMoney != null" >
+        predict_money,
+      </if>
+      <if test="realityMoney != null" >
+        reality_money,
+      </if>
+      <if test="entryNum != null" >
+        entry_num,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="revId != null" >
+        #{revId,jdbcType=INTEGER},
+      </if>
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="predictMoney != null" >
+        #{predictMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="realityMoney != null" >
+        #{realityMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="entryNum != null" >
+        #{entryNum,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.RevenueManagement" >
+    update revenue_management
+    <set >
+      <if test="id != null" >
+        id = #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="predictMoney != null" >
+        predict_money = #{predictMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="realityMoney != null" >
+        reality_money = #{realityMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="entryNum != null" >
+        entry_num = #{entryNum,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where rev_id = #{revId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.RevenueManagement" >
+    update revenue_management
+    set id = #{id,jdbcType=INTEGER},
+      company_id = #{companyId,jdbcType=INTEGER},
+      predict_money = #{predictMoney,jdbcType=DECIMAL},
+      reality_money = #{realityMoney,jdbcType=DECIMAL},
+      entry_num = #{entryNum,jdbcType=INTEGER},
+      state = #{state,jdbcType=VARCHAR}
+    where rev_id = #{revId,jdbcType=INTEGER}
+  </update>
+</mapper>

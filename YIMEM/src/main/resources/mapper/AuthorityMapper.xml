@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.czx.yimem.dao.AuthorityMapper">
+    <resultMap id="BaseResultMap" type="com.czx.yimem.entity.Authority">
+            <id property="id" column="id"/>
+            <result property="authorityCode" column="authority_code"/>
+            <result property="authorityName" column="authority_name"/>
+            <result property="group" column="group"/>
+            <result property="fId" column="f_id"/>
+            <collection property="button" ofType="java.lang.String"
+                    select="selectButtonByFid" column="id"></collection>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,authority_code,authority_name,`group`,f_id
+    </sql>
+
+    <select id="selectButtonByFid" parameterType="java.lang.Integer" resultType="java.lang.String">
+        SELECT a.button from rc_authority a
+        where a.type=3 and a.f_id =#{id}
+    </select>
+
+    <select id="selectButtonByFid2" parameterType="com.czx.yimem.dto.ButtonVO" resultType="java.lang.String">
+        SELECT a.button
+        from rc_authority as a
+                 left join rc_role_authority as b on a.id = b.authority_id
+                 left join rc_user_role as c on b.role_id = c.role_id
+                 left join member as d on c.member_id = d.id
+        where  d.account = #{account} and a.type=3 and a.f_id=#{fId}
+    </select>
+
+    <select id="selectAllid" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT id
+        FROM (
+        SELECT
+        @r AS _id,
+        (SELECT @r := f_id FROM rc_authority WHERE id = _id) AS f_id,
+        @l := @l + 1 AS lvl
+        FROM
+        (SELECT @r := #{id}, @l := 0) vars,
+        rc_authority h
+        WHERE @r &lt;&gt; 0) T1
+        JOIN rc_authority T2
+        ON T1._id = T2.id
+        ORDER BY id;
+    </select>
+    <select id="selectAllByAccount" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT a.*,d.account
+        from rc_authority as a
+                 left join rc_role_authority as b on a.id = b.authority_id
+                 left join rc_user_role as c on b.role_id = c.role_id
+                 left join member as d on c.member_id = d.id
+        where  d.account = #{account}
+    </select>
+
+    <select id="selectAllByAccount2" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT a.*,d.account
+        from rc_authority as a
+                 left join rc_role_authority as b on a.id = b.authority_id
+                 left join rc_user_role as c on b.role_id = c.role_id
+                 left join member as d on c.member_id = d.id
+        where del=0 and d.account = #{account}
+    </select>
+
+
+    <select id="selectAllByAccount4" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT a.*,d.account
+        from rc_authority as a
+                 left join rc_role_authority as b on a.id = b.authority_id
+                 left join rc_user_role as c on b.role_id = c.role_id
+                 left join member as d on c.member_id = d.id
+        where  d.account = #{account}
+    </select>
+
+    <select id="selectAllByAccount3" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT a.*,d.account
+        from rc_authority as a
+                 left join rc_role_authority as b on a.id = b.authority_id
+                 left join rc_user_role as c on b.role_id = c.role_id
+                 left join member as d on c.member_id = d.id
+        where del=0
+    </select>
+
+    <select id="selectisAdmin" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT count(*)
+        from rc_authority as a
+                 left join rc_role_authority as b on a.id = b.authority_id
+                 left join rc_user_role as c on b.role_id = c.role_id
+                 left join member as d on c.member_id = d.id
+        where a.authority_code='ADMIN' and d.account = #{account}
+    </select>
+
+    <select id="selectByRoleId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+
+        select rc_authority.*
+        from rc_authority,
+             rc_role_authority
+        where del=0 and rc_authority.id = rc_role_authority.authority_id
+          and rc_role_authority.role_id = #{roleId,jdbcType=INTEGER}
+
+    </select>
+
+
+
+    <select id="getAll" resultMap="BaseResultMap">
+        select rc_authority.*
+        from  rc_authority
+    </select>
+
+    <select id="getAll2" resultMap="BaseResultMap">
+        select rc_authority.*
+        from rc_authority where del=0
+    </select>
+
+    <select id="selectByFId" resultType="com.czx.yimem.dto.MenuVO">
+        select rc_authority.authority_code as router, id
+        from rc_authority
+        where del=0 and f_id = #{id}
+          and authority_code != "ADMIN"
+          and authority_code != "LG"
+    </select>
+
+    <select id="selectByFFId" resultType="java.lang.String">
+        select rc_authority.authority_code as router
+        from rc_authority
+        where del=0 and f_id = #{id}
+    </select>
+
+    <select id="selectByAuth" resultType="com.czx.yimem.entity.Authority">
+        select
+        *
+        from rc_authority
+        where del=0 and id in
+        <foreach collection="authes" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from rc_authority
+        where del=0 and id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from rc_authority
+        where  id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.czx.yimem.entity.Authority">
+        insert into rc_authority (id, authority_code, authority_name,
+            ` group `)
+        values (#{id,jdbcType=INTEGER}, #{authorityCode,jdbcType=VARCHAR}, #{authorityName,jdbcType=VARCHAR},
+                #{group,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.czx.yimem.entity.Authority">
+        insert into rc_authority
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="authorityCode != null">
+                authority_code,
+            </if>
+            <if test="authorityName != null">
+                authority_name,
+            </if>
+            <if test="group != null">
+                `group`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="authorityCode != null">
+                #{authorityCode,jdbcType=VARCHAR},
+            </if>
+            <if test="authorityName != null">
+                #{authorityName,jdbcType=VARCHAR},
+            </if>
+            <if test="group != null">
+                #{group,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.Authority">
+        update rc_authority
+        <set>
+            <if test="authorityCode != null">
+                authority_code = #{authorityCode,jdbcType=VARCHAR},
+            </if>
+            <if test="authorityName != null">
+                authority_name = #{authorityName,jdbcType=VARCHAR},
+            </if>
+            <if test="group != null">
+                `group` = #{group,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.Authority">
+        update rc_authority
+        set authority_code = #{authorityCode,jdbcType=VARCHAR},
+            authority_name = #{authorityName,jdbcType=VARCHAR},
+            `
+        group ` = #{group,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

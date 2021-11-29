@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.JobCategoryMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.JobCategory" >
+    <constructor >
+      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="job_cate_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="money" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="brokerage" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, job_cate_id, money, brokerage, create_time, state
+  </sql>
+  <select id="selectByjobCateId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from job_category
+    where job_cate_id = #{jobCateId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from job_category
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="findByjobCategory10" resultType="com.czx.yimem.entity.JobCategory" parameterType="com.czx.yimem.entity.JobCategory" >
+    select
+    a.id,  a.job_cate_id as jobCateId , a.money, a.brokerage, a.create_time as createTime, a.state,b.categoryname as name
+    ,b.parentid as parentId
+    from job_category as a
+    LEFT JOIN qs_category_jobs as b ON a.job_cate_id = b.id
+    <where>
+      1=1
+      <if test="jobCateId != null and jobCateId != ''">
+        and b.parentid =  = #{jobCateId}
+      </if>
+      <if test="name != null and name!=''">
+        and b.categoryname like  concat('%',#{name},'%')
+      </if>
+    </where>
+    ORDER BY a.create_time DESC
+  </select>
+
+
+  <select id="findByjobCategory9" resultType="java.lang.Integer"  >
+    SELECT id
+    FROM (
+    SELECT
+    @r AS _id,
+    (SELECT @r := parentid FROM qs_category_jobs WHERE id = _id) AS parent_id,
+    @l := @l + 1 AS lvl
+    FROM
+    (SELECT @r :=#{id}, @l := 0) vars,
+    qs_category_jobs h
+    WHERE @r &lt;&gt; 0) T1
+    JOIN qs_category_jobs T2
+    ON T1._id = T2.id
+    ORDER BY id;
+  </select>
+
+  <select id="findByjobCategory8" resultType="com.czx.yimem.dto.JobCategoryOV">
+    select
+    a.id,  a.job_cate_id as jobCateId , a.job_cate_id as `key` , a.money, a.brokerage, a.create_time as createTime, a.state,b.categoryname as name
+    ,b.parentid as parentId
+    from job_category as a
+    LEFT JOIN qs_category_jobs as b ON a.job_cate_id = b.id
+    where a.job_cate_id in
+    <foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+    ORDER BY a.create_time DESC
+  </select>
+
+  <select id="findByjobCategory7" resultType="java.lang.Integer"  >
+    SELECT id
+    FROM (
+    SELECT
+    @r AS _id,
+    (SELECT @r := parentid FROM qs_category_jobs WHERE id = _id) AS parent_id,
+    @l := @l + 1 AS lvl
+    FROM
+    (SELECT @r := #{id}, @l := 0) vars,
+    qs_category_jobs h
+    WHERE @r &lt;&gt; 0) T1
+    JOIN qs_category_jobs T2
+    ON T1._id = T2.id
+    where parentid=0
+    ORDER BY id;
+  </select>
+
+
+  <select id="findByjobCategory6" resultType="com.czx.yimem.dto.JobCategoryOV"  >
+    select
+      a.id,  a.job_cate_id as jobCateId , a.job_cate_id as `key` , a.money, a.brokerage, a.create_time as createTime, a.state,b.categoryname as name
+         ,b.parentid as parentId
+    from job_category as a
+           LEFT JOIN qs_category_jobs as b ON a.job_cate_id = b.id
+    where b.id=#{id}
+  </select>
+
+
+  <select id="findByjobCategory5" resultType="com.czx.yimem.dto.JobCategoryVO" parameterType="com.czx.yimem.entity.JobCategory" >
+    SELECT
+    a.id,  a.job_cate_id as jobCateId , a.job_cate_id as `key` , a.money, a.brokerage, a.create_time as createTime, a.state,b.categoryname as name
+    ,b.parentid as parentId
+    from job_category a
+    LEFT JOIN qs_category_jobs as b on b.id =a.job_cate_id
+    where   b.id not in (
+    SELECT parentid from qs_category_jobs) and b.parentid !=0
+      <if test="startTime != null and startTime != '' ">
+        and  DATE_FORMAT(a.create_time,'%Y-%m-%d') &gt;=  #{startTime}
+      </if>
+      <if test="endTime != null and endTime != '' ">
+        and  DATE_FORMAT(a.create_time,'%Y-%m-%d') &lt;=  #{endTime}
+      </if>
+    ORDER BY a.create_time DESC
+  </select>
+
+  <select id="findByjobCategory4" resultType="com.czx.yimem.dto.JobCategoryOV" parameterType="com.czx.yimem.entity.JobCategory" >
+    select
+    a.id,  a.job_cate_id as jobCateId , a.job_cate_id as `key` , a.money, a.brokerage, a.create_time as createTime, a.state,b.categoryname as name
+    ,b.parentid as parentId
+    from job_category as a
+    LEFT JOIN qs_category_jobs as b ON a.job_cate_id = b.id
+    <where>
+      b.parentid=0
+      <if test="startTime != null and startTime != '' ">
+        and  DATE_FORMAT(create_time,'%Y-%m-%d') &gt;=  #{startTime}
+      </if>
+      <if test="endTime != null and endTime != '' ">
+        and  DATE_FORMAT(create_time,'%Y-%m-%d') &lt;=  #{endTime}
+      </if>
+      <if test="jobCateId != null and jobCateId != ''">
+        and a.job_cate_id = #{jobCateId}
+      </if>
+      <if test="name != null and name!=''">
+        and b.categoryname like  concat('%',#{name},'%')
+      </if>
+    </where>
+    ORDER BY a.create_time DESC
+  </select>
+
+
+  <select id="findByjobCategory3" resultType="com.czx.yimem.dto.JobCategoryOV" parameterType="com.czx.yimem.entity.JobCategory" >
+    select
+    a.id,  a.job_cate_id as jobCateId , a.job_cate_id as `key` , a.money, a.brokerage, a.create_time as createTime, a.state,b.categoryname as name
+    ,b.parentid as parentId
+    from job_category as a
+    LEFT JOIN qs_category_jobs as b ON a.job_cate_id = b.id
+    <where>
+      1=1
+      <if test="startTime != null and startTime != '' ">
+        and  DATE_FORMAT(create_time,'%Y-%m-%d') &gt;=  #{startTime}
+      </if>
+      <if test="endTime != null and endTime != '' ">
+        and  DATE_FORMAT(create_time,'%Y-%m-%d') &lt;=  #{endTime}
+      </if>
+      <if test="jobCateId != null and jobCateId != ''">
+        and a.job_cate_id = #{jobCateId}
+      </if>
+      <if test="name != null and name!=''">
+        and b.categoryname like  concat('%',#{name},'%')
+      </if>
+    </where>
+    ORDER BY a.create_time DESC
+  </select>
+
+
+  <select id="findByjobCategory2" resultType="com.czx.yimem.dto.JobCategoryVO" parameterType="com.czx.yimem.entity.JobCategory" >
+    select
+    a.id,  a.job_cate_id as jobCateId , a.job_cate_id as `key` , a.money, a.brokerage, a.create_time as createTime, a.state,b.categoryname as name
+    ,b.parentid as parentId
+    from job_category as a
+    LEFT JOIN qs_category_jobs as b ON a.job_cate_id = b.id
+    <where>
+      1=1
+      <if test="startTime != null and startTime != '' ">
+        and  DATE_FORMAT(create_time,'%Y-%m-%d') &gt;=  #{startTime}
+      </if>
+      <if test="endTime != null and endTime != '' ">
+        and  DATE_FORMAT(create_time,'%Y-%m-%d') &lt;=  #{endTime}
+      </if>
+      <if test="jobCateId != null and jobCateId != ''">
+        and a.job_cate_id = #{jobCateId}
+      </if>
+      <if test="name != null and name!=''">
+        and b.categoryname like  concat('%',#{name},'%')
+      </if>
+    </where>
+    ORDER BY a.create_time DESC
+  </select>
+
+  <select id="findByjobCategory" resultType="com.czx.yimem.entity.JobCategory" parameterType="com.czx.yimem.entity.JobCategory" >
+    select
+    a.id,  a.job_cate_id as jobCateId , a.money, a.brokerage, a.create_time as createTime, a.state,b.categoryname as name
+    ,b.parentid as parentId
+    from job_category as a
+    LEFT JOIN qs_category_jobs as b ON a.job_cate_id = b.id
+    <where>
+      1=1
+      <if test="startTime != null and startTime != '' ">
+        and  DATE_FORMAT(create_time,'%Y-%m-%d') &gt;=  #{startTime}
+      </if>
+      <if test="endTime != null and endTime != '' ">
+        and  DATE_FORMAT(create_time,'%Y-%m-%d') &lt;=  #{endTime}
+      </if>
+      <if test="jobCateId != null and jobCateId != ''">
+        and a.job_cate_id = #{jobCateId}
+      </if>
+      <if test="name != null and name!=''">
+        and b.categoryname like  concat('%',#{name},'%')
+      </if>
+    </where>
+    ORDER BY a.create_time DESC
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from job_category
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteByJobCateId" parameterType="com.czx.yimem.entity.JobCategory" >
+    delete from job_category
+    where job_cate_id = #{jobCateId,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.czx.yimem.entity.JobCategory" >
+    insert into job_category (id, job_cate_id, money,
+      brokerage, create_time, state
+      )
+    values (#{id,jdbcType=INTEGER}, #{jobCateId,jdbcType=INTEGER}, #{money,jdbcType=DECIMAL},
+      #{brokerage,jdbcType=DECIMAL}, now(), #{state,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.czx.yimem.entity.JobCategory" >
+    insert into job_category
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="jobCateId != null" >
+        job_cate_id,
+      </if>
+      <if test="money != null" >
+        money,
+      </if>
+      <if test="brokerage != null" >
+        brokerage,
+      </if>
+        create_time,
+      <if test="state != null" >
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="jobCateId != null" >
+        #{jobCateId,jdbcType=INTEGER},
+      </if>
+      <if test="money != null" >
+        #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="brokerage != null" >
+        #{brokerage,jdbcType=DECIMAL},
+      </if>
+      now(),
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.JobCategory" >
+    update job_category
+    <set >
+      <if test="jobCateId != null" >
+        job_cate_id = #{jobCateId,jdbcType=INTEGER},
+      </if>
+      <if test="money != null" >
+        money = #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="brokerage != null" >
+        brokerage = #{brokerage,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+  <update id="updateByJobCateId" parameterType="com.czx.yimem.entity.JobCategory" >
+    update job_category
+    <set >
+      <if test="jobCateId != null" >
+        job_cate_id = #{jobCateId,jdbcType=INTEGER},
+      </if>
+      <if test="money != null" >
+        money = #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="brokerage != null" >
+        brokerage = #{brokerage,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where job_cate_id = #{jobCateId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.JobCategory" >
+    update job_category
+    set job_cate_id = #{jobCateId,jdbcType=INTEGER},
+      money = #{money,jdbcType=DECIMAL},
+      brokerage = #{brokerage,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.JobLightenEnumMapper">
+    <resultMap id="BaseResultMap" type="com.czx.yimem.entity.JobLightenEnum">
+        <constructor>
+            <idArg column="job_lighten_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="name" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        job_lighten_id,
+        id,
+        name,
+        create_time,
+        state
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from job_lighten_enum
+        where job_lighten_id = #{jobLightenId,jdbcType=INTEGER} and state = "1"
+    </select>
+    <select id="selectByJobLighten" resultMap="BaseResultMap" parameterType="com.czx.yimem.entity.JobCustomLightenEnum">
+        select
+        <include refid="Base_Column_List"/>
+        from job_lighten_enum
+        <where>
+            1=1
+            <if test="jobLightenId != null and jobLightenId != ''">
+                and job_lighten_id = #{jobLightenId}
+            </if>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="state != null and state != ''">
+                and state = #{state}
+            </if>
+            <if test="startTime != null and startTime != '' ">
+                and  DATE_FORMAT(create_time,'%Y-%m-%d') &gt;=  #{startTime}
+            </if>
+            <if test="endTime != null and endTime != '' ">
+                and  DATE_FORMAT(create_time,'%Y-%m-%d') &lt;=  #{endTime}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from job_lighten_enum
+        where job_lighten_id = #{jobLightenId,jdbcType=INTEGER}
+    </delete>
+
+    <select id="findJobLightenEnumbyjobId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select job_lighten_enum.*
+        from job_lighten_enum
+                 LEFT JOIN job_lightspot on job_lighten_enum.job_lighten_id = job_lightspot.job_lighten_id
+        where job_lightspot.job_id = #{jobId,jdbcType=INTEGER}
+          and job_lightspot.state = 1
+          and job_lighten_enum.state = 1
+    </select>
+
+    <insert id="insert" parameterType="com.czx.yimem.entity.JobLightenEnum">
+        insert into job_lighten_enum (job_lighten_id, id, name,
+                                      create_time, state)
+        values (#{jobLightenId,jdbcType=INTEGER}, #{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+                now(), #{state,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.czx.yimem.entity.JobLightenEnum">
+        insert into job_lighten_enum
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="jobLightenId != null">
+                job_lighten_id,
+            </if>
+            <if test="id != null">
+                id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="jobLightenId != null">
+                #{jobLightenId,jdbcType=INTEGER},
+            </if>
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            now(),
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.JobLightenEnum">
+        update job_lighten_enum
+        <set>
+            <if test="id != null">
+                id = #{id,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                state = #{state,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where job_lighten_id = #{jobLightenId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.JobLightenEnum">
+        update job_lighten_enum
+        set id    = #{id,jdbcType=INTEGER},
+            name  = #{name,jdbcType=VARCHAR},
+            state = #{state,jdbcType=VARCHAR}
+        where job_lighten_id = #{jobLightenId,jdbcType=INTEGER}
+    </update>
+</mapper>

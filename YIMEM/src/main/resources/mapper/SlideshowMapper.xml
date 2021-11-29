@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.SlideshowMapper" >
+  <resultMap id="BaseResultMap" type="com.czx.yimem.entity.Slideshow" >
+    <constructor >
+      <idArg column="ss_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="to_user" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="url" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ss_id, id, to_user, create_time, url, state
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from slideshow
+    where ss_id = #{ssId,jdbcType=INTEGER}  and state = "1"
+  </select>
+
+
+  <select id="findbytoUser" resultMap="BaseResultMap" parameterType="com.czx.yimem.entity.Slideshow" >
+    select
+    <include refid="Base_Column_List" />
+    from slideshow
+    where to_user = #{toUser}  and state = "1"
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from slideshow
+    where ss_id = #{ssId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.czx.yimem.entity.Slideshow" >
+    insert into slideshow (ss_id, id, to_user,
+      create_time, url, state
+      )
+    values (#{ssId,jdbcType=INTEGER}, #{id,jdbcType=INTEGER}, #{toUser,jdbcType=VARCHAR},
+            now(), #{url,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.czx.yimem.entity.Slideshow" >
+    insert into slideshow
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ssId != null" >
+        ss_id,
+      </if>
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="toUser != null" >
+        to_user,
+      </if>
+        create_time,
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ssId != null" >
+        #{ssId,jdbcType=INTEGER},
+      </if>
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="toUser != null" >
+        #{toUser,jdbcType=VARCHAR},
+      </if>
+      now(),
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.Slideshow" >
+    update slideshow
+    <set >
+      <if test="id != null" >
+        id = #{id,jdbcType=INTEGER},
+      </if>
+      <if test="toUser != null" >
+        to_user = #{toUser,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ss_id = #{ssId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.Slideshow" >
+    update slideshow
+    set id = #{id,jdbcType=INTEGER},
+      to_user = #{toUser,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
+      state = #{state,jdbcType=VARCHAR}
+    where ss_id = #{ssId,jdbcType=INTEGER}
+  </update>
+</mapper>

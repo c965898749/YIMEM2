@@ -1,0 +1,974 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.JobMapper">
+    <resultMap id="BaseResultMap" type="com.czx.yimem.entity.Job">
+        <constructor>
+            <idArg column="job_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="company_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="is_all_day" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="name" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="job_cate_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="salary" jdbcType="DECIMAL" javaType="java.math.BigDecimal"/>
+            <arg column="job_exp" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="education_exp" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="remark" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="adress" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="city_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="country_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="province_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="people_num" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="timeliness" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="start_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="end_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="part_time_salary" jdbcType="DECIMAL" javaType="java.math.BigDecimal"/>
+            <arg column="payments" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="job_content" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="job_sex" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="start_age" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="end_age" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="money" jdbcType="DECIMAL" javaType="java.math.BigDecimal"/>
+            <arg column="brokerage" jdbcType="DECIMAL" javaType="java.math.BigDecimal"/>
+            <arg column="rule" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="priority" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="map_x" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="map_y" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="map_zoom" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="salary_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="low_salary" jdbcType="DECIMAL" javaType="java.math.BigDecimal"/>
+            <arg column="hig_salary" jdbcType="DECIMAL" javaType="java.math.BigDecimal"/>
+            <arg column="isgraduate" jdbcType="BIT" javaType="java.lang.Boolean"/>
+            <arg column="showcompany" jdbcType="BIT" javaType="java.lang.Boolean"/>
+            <arg column="read_count" jdbcType="BIGINT" javaType="java.lang.Long" />
+            <arg column="isread" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="logoUrl" jdbcType="VARCHAR" javaType="java.lang.String"/>
+
+        </constructor>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        job_id,
+        id,
+        company_id,
+        is_all_day,
+        name,
+        job_cate_id,
+        salary,
+        job_exp,
+        education_exp,
+        remark,
+        adress,
+        state,
+        city_id,
+        country_id,
+        province_id,
+        people_num,
+        timeliness,
+        start_time,
+        end_time,
+        part_time_salary,
+        payments,
+        job_content,
+        create_time,
+        job_sex,
+        start_age,
+        end_age,
+        money,
+        brokerage,
+        rule,
+        priority,
+        map_x,
+        map_y,
+        map_zoom,
+        salary_id,low_salary,hig_salary,isgraduate,showcompany,read_count,isread
+    </sql>
+
+
+    <select id="selectJobLightspotIds" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        SELECT  DISTINCT job_lighten_id from job_lightspot
+        where job_id =  #{jobId}
+    </select>
+
+    <select id="selectphone" resultType="java.lang.String" parameterType="java.lang.Integer">
+        SELECT c.phone from job j
+        LEFT JOIN company c on c.company_id=j.company_id
+        where j.job_id=#{jobId}
+    </select>
+
+
+    <select id="findstate" resultType="java.lang.Integer">
+        select
+        count(1)
+        from job
+        where state="2" and  job_id in
+        <foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectbrokerage" resultType="java.math.BigDecimal" parameterType="java.lang.Integer">
+        SELECT read_count from job
+        where job_id = #{jobId}
+    </select>
+
+    <select id="selectjobisUse" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        SELECT count(*) from job
+        where job_id = #{jobId} and state="1"
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from job
+        where job_id = #{jobId}
+    </select>
+
+    <select id="selectByJob3" resultType="com.czx.yimem.entity.Job" parameterType="com.czx.yimem.entity.Job">
+        select a.job_id as jobId,a.`name` as name,c.id as jobCateId,c.categoryname as jobCateName,b.c_id as salaryId,b.c_name as wage,
+        e.province_id as provinceId,d.zh_label as provinceName,e.uuid as cityId,e.zh_label as cityName,
+        g.`name` as companyName,g.company_id as companyId,
+        f.money,f.brokerage,a.state,a.create_time as createTime,a.is_all_day as isAllDay,
+        h.c_id as jobExp,h.c_name as jobExpName,a.remark,a.adress,a.people_num as peopleNum,
+        a.education_exp as educationExp,i.c_name as educationExpName,a.timeliness,
+        a.start_time as startTime,a.end_time as endTime,a.part_time_salary as partTimeSalary,a.payments,
+        a.job_content as jobContent,a.job_sex as jobSex,a.start_age as startAge,a.end_age as endAge,a.priority,
+        a.map_x as mapX,a.map_y as mapY,a.rule,a.hig_salary as higSalary,a.low_salary as lowSalary,g.adress as companyAdress,
+        a.isgraduate,a.showcompany,a.read_count,z.zh_label as countryName,z.uuid as countryId,a.isread,g.scale,qct.c_name as businessname,g.logourl as logoUrl
+        from job as a
+        LEFT JOIN qs_category as b ON a.salary_id=b.c_id
+        LEFT JOIN qs_category_jobs as c on c.id=a.job_cate_id
+        LEFT JOIN rm_city as e on e.uuid=a.city_id
+        LEFT JOIN rm_province as d on d.province_code=e.province_id
+        LEFT JOIN rm_county as z on z.uuid=a.country_id
+        LEFT JOIN job_category as f on f.job_cate_id=a.job_cate_id
+        LEFT JOIN company as g on g.company_id =a.company_id
+        LEFT JOIN qs_category as h ON a.job_exp=h.c_id
+        LEFT JOIN qs_category as i ON a.education_exp=i.c_id
+        LEFT JOIN qs_category as qct ON qct.c_id=g.business_id
+        <where>
+            and a.state =1
+            <if test="companyId != null and companyId!=''">
+                and a.company_id = #{companyId}
+            </if>
+            <if test="companyName != null and companyName!=''">
+                and g.name like  concat('%',#{companyName},'%')
+            </if>
+            <if test="jobId != null and jobId!=''">
+                and a.job_id = #{jobId}
+            </if>
+            <if test="jobCateId != null and jobCateId!=''">
+                and a.job_cate_id = #{jobCateId}
+            </if>
+            <if test="provinceId != null and provinceId!=''">
+                and e.province_id = #{provinceId}
+            </if>
+            <if test="countryId != null and countryId!=''">
+                and a.country_id = #{countryId}
+            </if>
+            <if test="cityId != null and cityId!=''">
+                and a.city_id = #{cityId}
+            </if>
+            <if test="salaryId != null and salaryId!=''">
+                and a.salary_id = #{salaryId}
+            </if>
+            <if test="educationExp != null and educationExp!=''">
+                and a.education_exp = #{educationExp}
+            </if>
+            <if test="jobExp != null and jobExp!=''">
+                and a.job_exp = #{jobExp}
+            </if>
+            <if test="name != null and name!=''">
+                and a.name like  concat('%',#{name},'%')
+            </if>
+            <if test="isAllDay != null and isAllDay!=''">
+                and a.is_all_day =#{isAllDay}
+            </if>
+            <if test="priority != null and priority!=''">
+                and a.priority =#{priority}
+            </if>
+        </where>
+        <if test="mapZoom =='QS_wage'">
+           ORDER BY a.hig_salary DESC
+        </if>
+        <if test="mapZoom =='QS_new'">
+            ORDER BY a.create_time DESC
+        </if>
+        <if test="mapZoom =='QS_hot'">
+            ORDER BY a.read_count DESC
+        </if>
+        <if test="mapZoom =='QS_brokerage'">
+            ORDER BY a.brokerage DESC
+        </if>
+        <if test="mapZoom =='QS_ISREAD'">
+            ORDER BY a.isread desc ,a.create_time DESC
+        </if>
+    </select>
+
+
+    <select id="selectByJob6" resultType="com.czx.yimem.entity.Job" parameterType="com.czx.yimem.entity.Job">
+        select a.job_id as jobId,a.`name` as name,c.id as jobCateId,c.categoryname as jobCateName,b.c_id as salaryId,b.c_name as wage,
+        e.province_id as provinceId,d.zh_label as provinceName,e.uuid as cityId,e.zh_label as cityName,
+        g.`name` as companyName,g.company_id as companyId,
+        f.money,f.brokerage,a.state,a.create_time as createTime,a.is_all_day as isAllDay,
+        h.c_id as jobExp,h.c_name as jobExpName,a.remark,a.adress,a.people_num as peopleNum,
+        a.education_exp as educationExp,i.c_name as educationExpName,a.timeliness,
+        a.start_time as startTime,a.end_time as endTime,a.part_time_salary as partTimeSalary,a.payments,
+        a.job_content as jobContent,a.job_sex as jobSex,a.start_age as startAge,a.end_age as endAge,a.priority,
+        a.map_x as mapX,a.map_y as mapY,a.rule,a.hig_salary as higSalary,a.low_salary as lowSalary,g.adress as companyAdress,
+        a.isgraduate,a.showcompany,a.read_count,z.zh_label as countryName,z.uuid as countryId,a.isread,g.scale,qct.c_name as businessname,g.logourl as logoUrl
+        from job as a
+        LEFT JOIN qs_category as b ON a.salary_id=b.c_id
+        LEFT JOIN qs_category_jobs as c on c.id=a.job_cate_id
+        LEFT JOIN rm_city as e on e.uuid=a.city_id
+        LEFT JOIN rm_province as d on d.province_code=e.province_id
+        LEFT JOIN rm_county as z on z.uuid=a.country_id
+        LEFT JOIN job_category as f on f.job_cate_id=a.job_cate_id
+        LEFT JOIN company as g on g.company_id =a.company_id
+        LEFT JOIN qs_category as h ON a.job_exp=h.c_id
+        LEFT JOIN qs_category as i ON a.education_exp=i.c_id
+        LEFT JOIN qs_category as qct ON qct.c_id=g.business_id
+        <where>
+            <if test="state != null and state!=''">
+                and a.state =#{state}
+            </if>
+            <if test="companyId != null and companyId!=''">
+                and a.company_id = #{companyId}
+            </if>
+            <if test="companyName != null and companyName!=''">
+                and g.name like  concat('%',#{companyName},'%')
+            </if>
+            <if test="jobId != null and jobId!=''">
+                and a.job_id = #{jobId}
+            </if>
+            <if test="jobCateId != null and jobCateId!=''">
+                and a.job_cate_id = #{jobCateId}
+            </if>
+            <if test="provinceId != null and provinceId!=''">
+                and e.province_id = #{provinceId}
+            </if>
+            <if test="countryId != null and countryId!=''">
+                and a.country_id = #{countryId}
+            </if>
+            <if test="cityId != null and cityId!=''">
+                and a.city_id = #{cityId}
+            </if>
+            <if test="salaryId != null and salaryId!=''">
+                and a.salary_id = #{salaryId}
+            </if>
+            <if test="educationExp != null and educationExp!=''">
+                and a.education_exp = #{educationExp}
+            </if>
+            <if test="jobExp != null and jobExp!=''">
+                and a.job_exp = #{jobExp}
+            </if>
+            <if test="name != null and name!=''">
+                and a.name like  concat('%',#{name},'%')
+            </if>
+            <if test="isAllDay != null and isAllDay!=''">
+                and a.is_all_day =#{isAllDay}
+            </if>
+            <if test="priority != null and priority!=''">
+                and a.priority =#{priority}
+            </if>
+        </where>
+        <if test="mapZoom =='QS_wage'">
+            ORDER BY a.hig_salary DESC
+        </if>
+        <if test="mapZoom =='QS_new'">
+            ORDER BY a.create_time DESC
+        </if>
+        <if test="mapZoom =='QS_hot'">
+            ORDER BY a.read_count DESC
+        </if>
+        <if test="mapZoom =='QS_brokerage'">
+            ORDER BY a.brokerage DESC
+        </if>
+        <if test="mapZoom =='QS_ISREAD'">
+            ORDER BY a.isread desc ,a.create_time DESC
+        </if>
+    </select>
+
+
+    <select id="selectByJob" resultType="com.czx.yimem.entity.Job" parameterType="com.czx.yimem.entity.Job">
+        select a.job_id as jobId,a.`name` as name,c.id as jobCateId,c.categoryname as jobCateName,b.c_id as salaryId,b.c_name as wage,
+        e.province_id as provinceId,d.zh_label as provinceName,e.uuid as cityId,e.zh_label as cityName,
+        g.`name` as companyName,g.company_id as companyId,
+        f.money,f.brokerage,a.state,a.create_time as createTime,a.is_all_day as isAllDay,
+        h.c_id as jobExp,h.c_name as jobExpName,a.remark,a.adress,a.people_num as peopleNum,
+        a.education_exp as educationExp,i.c_name as educationExpName,a.timeliness,
+        a.start_time as startTime,a.end_time as endTime,a.part_time_salary as partTimeSalary,a.payments,
+        a.job_content as jobContent,a.job_sex as jobSex,a.start_age as startAge,a.end_age as endAge,a.priority,
+        a.map_x as mapX,a.map_y as mapY,a.rule,a.hig_salary as higSalary,a.low_salary as lowSalary,g.adress as companyAdress,
+        a.isgraduate,a.showcompany,a.read_count,z.zh_label as countryName,z.uuid as countryId,a.isread
+        from job as a
+        LEFT JOIN qs_category as b ON a.salary_id=b.c_id
+        LEFT JOIN qs_category_jobs as c on c.id=a.job_cate_id
+        LEFT JOIN rm_city as e on e.uuid=a.city_id
+        LEFT JOIN rm_province as d on d.province_code=e.province_id
+        LEFT JOIN rm_county as z on z.uuid=a.country_id
+        LEFT JOIN job_category as f on f.job_cate_id=a.job_cate_id
+        LEFT JOIN company as g on g.company_id =a.company_id
+        LEFT JOIN qs_category as h ON a.job_exp=h.c_id
+        LEFT JOIN qs_category as i ON a.education_exp=i.c_id
+        <where>
+            <if test="companyId != null and companyId!=''">
+                and a.company_id = #{companyId}
+            </if>
+            <if test="companyName != null and companyName!=''">
+                and g.name like  concat('%',#{companyName},'%')
+            </if>
+            <if test="jobId != null and jobId!=''">
+                and a.job_id = #{jobId}
+            </if>
+            <if test="jobCateId != null and jobCateId!=''">
+                and a.job_cate_id = #{jobCateId}
+            </if>
+            <if test="provinceId != null and provinceId!=''">
+                and e.province_id = #{provinceId}
+            </if>
+            <if test="countryId != null and countryId!=''">
+                and a.country_id = #{countryId}
+            </if>
+            <if test="cityId != null and cityId!=''">
+                and a.city_id = #{cityId}
+            </if>
+            <if test="salaryId != null and salaryId!=''">
+                and a.salary_id = #{salaryId}
+            </if>
+            <if test="educationExp != null and educationExp!=''">
+                and a.education_exp = #{educationExp}
+            </if>
+            <if test="jobExp != null and jobExp!=''">
+                and a.job_exp = #{jobExp}
+            </if>
+            <if test="name != null and name!=''">
+                and a.name like  concat('%',#{name},'%')
+            </if>
+            <if test="state != null and state!=''">
+                and a.state =#{state}
+            </if>
+            <if test="isAllDay != null and isAllDay!=''">
+                and a.is_all_day =#{isAllDay} and a.state &lt;&gt; '3'
+            </if>
+        </where>
+        <if test="mapZoom =='QS_wage'">
+            ORDER BY a.hig_salary DESC
+        </if>
+        <if test="mapZoom =='QS_new'">
+            ORDER BY a.create_time DESC
+        </if>
+        <if test="mapZoom =='QS_hot'">
+            ORDER BY a.read_count DESC
+        </if>
+        <if test="mapZoom =='QS_brokerage'">
+            ORDER BY a.brokerage DESC
+        </if>
+    </select>
+
+    <select id="selectByJob2" resultType="com.czx.yimem.entity.Job" parameterType="java.lang.Integer">
+        select a.job_id as jobId,a.`name` as name,c.id as jobCateId,c.categoryname as jobCateName,b.c_id as salaryId,b.c_name as wage,
+               e.province_id as provinceId,d.zh_label as provinceName,e.uuid as cityId,e.zh_label as cityName,
+               g.`name` as companyName,g.company_id as companyId,
+               f.money,f.brokerage,a.state,a.create_time as createTime,a.is_all_day as isAllDay,
+               h.c_id as jobExp,h.c_name as jobExpName,a.remark,a.adress,a.people_num as peopleNum,
+               a.education_exp as educationExp,i.c_name as educationExpName,a.timeliness,
+               a.start_time as startTime,a.end_time as endTime,a.part_time_salary as partTimeSalary,a.payments,
+               a.job_content as jobContent,a.job_sex as jobSex,a.start_age as startAge,a.end_age as endAge,a.priority,
+               a.map_x as mapX,a.map_y as mapY,a.rule,a.hig_salary as higSalary,a.low_salary as lowSalary,g.adress as companyAdress,
+               a.isgraduate,a.showcompany,a.read_count,z.zh_label as countryName,z.uuid as countryId,a.isread
+               from job as a
+               LEFT JOIN qs_category as b ON a.salary_id=b.c_id
+               LEFT JOIN qs_category_jobs as c on c.id=a.job_cate_id
+               LEFT JOIN rm_city as e on e.uuid=a.city_id
+               LEFT JOIN rm_province as d on d.province_code=e.province_id
+               LEFT JOIN job_category as f on f.job_cate_id=a.job_cate_id
+               LEFT JOIN company as g on g.company_id =a.company_id
+               LEFT JOIN qs_category as h ON a.job_exp=h.c_id
+               LEFT JOIN rm_county as z on z.uuid=a.country_id
+               LEFT JOIN qs_category as i ON a.education_exp=i.c_id
+               LEFT JOIN deliver w on w.job_id =a.job_id
+        where w.dev_id=#{devId}
+    </select>
+
+
+
+    <select id="selectByweTOJob" resultType="com.czx.yimem.entity.Job" parameterType="com.czx.yimem.entity.Job">
+        select a.job_id as jobId,a.`name` as name,c.id as jobCateId,c.categoryname as jobCateName,b.c_id as salaryId,b.c_name as wage,
+        e.province_id as provinceId,d.zh_label as provinceName,e.uuid as cityId,e.zh_label as cityName,
+        g.`name` as companyName,g.company_id as companyId,
+        f.money,f.brokerage,a.state,a.create_time as createTime,a.is_all_day as isAllDay,
+        h.c_id as jobExp,h.c_name as jobExpName,a.remark,a.adress,a.people_num as peopleNum,
+        a.education_exp as educationExp,i.c_name as educationExpName,a.timeliness,
+        a.start_time as startTime,a.end_time as endTime,a.part_time_salary as partTimeSalary,a.payments,
+        a.job_content as jobContent,a.job_sex as jobSex,a.start_age as startAge,a.end_age as endAge,a.priority,
+        a.map_x as mapX,a.map_y as mapY,a.rule,a.hig_salary as higSalary,a.low_salary as lowSalary,g.adress as companyAdress
+        ,a.isgraduate,a.showcompany,a.read_count,z.zh_label as countryName,z.uuid as countryId,a.isread
+        from job as a
+        LEFT JOIN qs_category as b ON a.salary_id=b.c_id
+        LEFT JOIN qs_category_jobs as c on c.id=a.job_cate_id
+        LEFT JOIN rm_city as e on e.uuid=a.city_id
+        LEFT JOIN rm_province as d on d.province_code=e.province_id
+        LEFT JOIN job_category as f on f.job_cate_id=a.job_cate_id
+        LEFT JOIN company as g on g.company_id =a.company_id
+        LEFT JOIN qs_category as h ON a.job_exp=h.c_id
+        LEFT JOIN qs_category as i ON a.education_exp=i.c_id
+        LEFT JOIN rm_county as z on z.uuid=a.country_id
+        <where>
+            <if test="companyId != null and companyId!=''">
+                and a.company_id = #{companyId}
+            </if>
+            <if test="companyName != null and companyName!=''">
+                and  g.name like  concat('%',#{companyName},'%')
+            </if>
+            <if test="jobId != null and jobId!=''">
+                and a.job_id = #{jobId}
+            </if>
+            <if test="jobCateId != null and jobCateId!=''">
+                and a.job_cate_id = #{jobCateId}
+            </if>
+            <if test="provinceId != null and provinceId!=''">
+                and e.province_id = #{provinceId}
+            </if>
+            <if test="countryId != null and countryId!=''">
+                and a.country_id = #{countryId}
+            </if>
+            <if test="cityId != null and cityId!=''">
+                and a.city_id = #{cityId}
+            </if>
+            <if test="salaryId != null and salaryId!=''">
+                and a.salary_id = #{salaryId}
+            </if>
+            <if test="educationExp != null and educationExp!=''">
+                and a.education_exp = #{educationExp}
+            </if>
+            <if test="jobExp != null and jobExp!=''">
+                and a.job_exp = #{jobExp}
+            </if>
+            <if test="name != null and name!=''">
+                and a.name like  concat('%',#{name},'%')
+            </if>
+            <if test="state != null and state!=''">
+                and a.state =#{state}
+            </if>
+            <if test="isAllDay != null and isAllDay!=''">
+                and a.is_all_day =#{isAllDay}
+            </if>
+            and g.is_entrust=1 and a.state &lt;&gt; '3'
+        </where>
+        <if test="mapZoom =='QS_wage'">
+            ORDER BY a.hig_salary DESC
+        </if>
+        <if test="mapZoom =='QS_new'">
+            ORDER BY a.create_time DESC
+        </if>
+        <if test="mapZoom =='QS_hot'">
+            ORDER BY a.read_count DESC
+        </if>
+        <if test="mapZoom =='QS_brokerage'">
+            ORDER BY a.brokerage DESC
+        </if>
+    </select>
+
+
+
+    <select id="selectByzhJiJob" resultType="com.czx.yimem.entity.Job" parameterType="com.czx.yimem.entity.Job">
+        select a.job_id as jobId,a.`name` as name,c.id as jobCateId,c.categoryname as jobCateName,b.c_id as salaryId,b.c_name as wage,
+        e.province_id as provinceId,d.zh_label as provinceName,e.uuid as cityId,e.zh_label as cityName,
+        g.`name` as companyName,g.company_id as companyId,
+        f.money,f.brokerage,a.state,a.create_time as createTime,a.is_all_day as isAllDay,
+        h.c_id as jobExp,h.c_name as jobExpName,a.remark,a.adress,a.people_num as peopleNum,
+        a.education_exp as educationExp,i.c_name as educationExpName,a.timeliness,
+        a.start_time as startTime,a.end_time as endTime,a.part_time_salary as partTimeSalary,a.payments,
+        a.job_content as jobContent,a.job_sex as jobSex,a.start_age as startAge,a.end_age as endAge,a.priority,
+        a.map_x as mapX,a.map_y as mapY,a.rule,a.hig_salary as higSalary,a.low_salary as lowSalary,g.adress as companyAdress
+        ,a.isgraduate,a.showcompany,a.read_count,z.zh_label as countryName,z.uuid as countryId,a.isread
+        from job as a
+        LEFT JOIN qs_category as b ON a.salary_id=b.c_id
+        LEFT JOIN qs_category_jobs as c on c.id=a.job_cate_id
+        LEFT JOIN rm_city as e on e.uuid=a.city_id
+        LEFT JOIN rm_province as d on d.province_code=e.province_id
+        LEFT JOIN job_category as f on f.job_cate_id=a.job_cate_id
+        LEFT JOIN company as g on g.company_id =a.company_id
+        LEFT JOIN qs_category as h ON a.job_exp=h.c_id
+        LEFT JOIN qs_category as i ON a.education_exp=i.c_id
+        LEFT JOIN rm_county as z on z.uuid=a.country_id
+        <where>
+            <if test="companyId != null and companyId!=''">
+                and a.company_id = #{companyId}
+            </if>
+            <if test="companyName != null and companyName!=''">
+                and g.name like  concat('%',#{companyName},'%')
+            </if>
+            <if test="jobId != null and jobId!=''">
+                and a.job_id = #{jobId}
+            </if>
+            <if test="jobCateId != null and jobCateId!=''">
+                and a.job_cate_id = #{jobCateId}
+            </if>
+            <if test="provinceId != null and provinceId!=''">
+                and e.province_id = #{provinceId}
+            </if>
+            <if test="countryId != null and countryId!=''">
+                and a.country_id = #{countryId}
+            </if>
+            <if test="cityId != null and cityId!=''">
+                and a.city_id = #{cityId}
+            </if>
+            <if test="salaryId != null and salaryId!=''">
+                and a.salary_id = #{salaryId}
+            </if>
+            <if test="educationExp != null and educationExp!=''">
+                and a.education_exp = #{educationExp}
+            </if>
+            <if test="jobExp != null and jobExp!=''">
+                and a.job_exp = #{jobExp}
+            </if>
+            <if test="name != null and name!=''">
+                and a.name like  concat('%',#{name},'%')
+            </if>
+            <if test="state != null and state!=''">
+                and a.state =#{state}
+            </if>
+            <if test="isAllDay != null and isAllDay!=''">
+                and a.is_all_day =#{isAllDay}
+            </if>
+            and g.is_entrust=0 and a.state &lt;&gt; '3'
+        </where>
+        <if test="mapZoom =='QS_wage'">
+            ORDER BY a.hig_salary DESC
+        </if>
+        <if test="mapZoom =='QS_new'">
+            ORDER BY a.create_time DESC
+        </if>
+        <if test="mapZoom =='QS_hot'">
+            ORDER BY a.read_count DESC
+        </if>
+        <if test="mapZoom =='QS_brokerage'">
+            ORDER BY a.brokerage DESC
+        </if>
+    </select>
+
+
+
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from job
+        where job_id = #{jobId,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.czx.yimem.entity.Job">
+        insert into job (job_id, id, company_id,
+                         is_all_day, name, job_cate_id,
+                         salary, job_exp, education_exp,
+                         remark, adress, state,
+                         city_id, country_id, province_id,
+                         people_num, timeliness, start_time,
+                         end_time, part_time_salary, payments,
+                         job_content, create_time, job_sex,
+                         start_age, end_age, money,
+                         brokerage, rule, priority)
+        values (#{jobId,jdbcType=INTEGER}, #{id,jdbcType=INTEGER}, #{companyId,jdbcType=INTEGER},
+                #{isAllDay,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{jobCateId,jdbcType=INTEGER},
+                #{salary,jdbcType=DECIMAL}, #{jobExp,jdbcType=VARCHAR}, #{educationExp,jdbcType=VARCHAR},
+                #{remark,jdbcType=VARCHAR}, #{adress,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR},
+                #{cityId,jdbcType=INTEGER}, #{countryId,jdbcType=INTEGER}, #{provinceId,jdbcType=INTEGER},
+                #{peopleNum,jdbcType=INTEGER}, #{timeliness,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP},
+                #{endTime,jdbcType=TIMESTAMP}, #{partTimeSalary,jdbcType=DECIMAL}, #{payments,jdbcType=VARCHAR},
+                #{jobContent,jdbcType=VARCHAR}, now(), #{jobSex,jdbcType=VARCHAR},
+                #{startAge,jdbcType=INTEGER}, #{endAge,jdbcType=INTEGER}, #{money,jdbcType=DECIMAL},
+                #{brokerage,jdbcType=DECIMAL}, #{rule,jdbcType=VARCHAR}, #{priority,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="jobId" parameterType="com.czx.yimem.entity.Job">
+        insert into job
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="companyId != null">
+                company_id,
+            </if>
+            <if test="isAllDay != null">
+                is_all_day,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="jobCateId != null">
+                job_cate_id,
+            </if>
+            <if test="salary != null">
+                salary,
+            </if>
+            <if test="jobExp != null">
+                job_exp,
+            </if>
+            <if test="educationExp != null">
+                education_exp,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="adress != null">
+                adress,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="cityId != null">
+                city_id,
+            </if>
+            <if test="countryId != null">
+                country_id,
+            </if>
+            <if test="provinceId != null">
+                province_id,
+            </if>
+            <if test="peopleNum != null">
+                people_num,
+            </if>
+            <if test="timeliness != null">
+                timeliness,
+            </if>
+            <if test="startTime != null">
+                start_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="partTimeSalary != null">
+                part_time_salary,
+            </if>
+            <if test="payments != null">
+                payments,
+            </if>
+            <if test="jobContent != null">
+                job_content,
+            </if>
+                create_time,
+            <if test="jobSex != null">
+                job_sex,
+            </if>
+            <if test="startAge != null">
+                start_age,
+            </if>
+            <if test="endAge != null">
+                end_age,
+            </if>
+            <if test="money != null">
+                money,
+            </if>
+            <if test="brokerage != null">
+                brokerage,
+            </if>
+            <if test="rule != null">
+                rule,
+            </if>
+            <if test="priority != null">
+                priority,
+            </if>
+            <if test="mapX != null">
+                map_x,
+            </if>
+            <if test="mapY != null">
+                map_y,
+            </if>
+            <if test="mapZoom != null">
+                map_zoom,
+            </if>
+            <if test="salaryId != null">
+                salary_id,
+            </if>
+            <if test="higSalary != null">
+                hig_salary,
+            </if>
+            <if test="lowSalary != null">
+                low_salary,
+            </if>
+            <if test="isgraduate != null">
+                isgraduate,
+            </if>
+            <if test="showcompany != null">
+                showcompany,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="companyId != null">
+                #{companyId},
+            </if>
+            <if test="isAllDay != null">
+                #{isAllDay},
+            </if>
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="jobCateId != null">
+                #{jobCateId},
+            </if>
+            <if test="salary != null">
+                #{salary},
+            </if>
+            <if test="jobExp != null">
+                #{jobExp},
+            </if>
+            <if test="educationExp != null">
+                #{educationExp},
+            </if>
+            <if test="remark != null">
+                #{remark},
+            </if>
+            <if test="adress != null">
+                #{adress},
+            </if>
+            <if test="state != null">
+                #{state},
+            </if>
+            <if test="cityId != null">
+                #{cityId},
+            </if>
+            <if test="countryId != null">
+                #{countryId},
+            </if>
+            <if test="provinceId != null">
+                #{provinceId},
+            </if>
+            <if test="peopleNum != null">
+                #{peopleNum},
+            </if>
+            <if test="timeliness != null">
+                #{timeliness},
+            </if>
+            <if test="startTime != null">
+                #{startTime},
+            </if>
+            <if test="endTime != null">
+                #{endTime},
+            </if>
+            <if test="partTimeSalary != null">
+                #{partTimeSalary},
+            </if>
+            <if test="payments != null">
+                #{payments},
+            </if>
+            <if test="jobContent != null">
+                #{jobContent},
+            </if>
+            now(),
+            <if test="jobSex != null">
+                #{jobSex},
+            </if>
+            <if test="startAge != null">
+                #{startAge},
+            </if>
+            <if test="endAge != null">
+                #{endAge},
+            </if>
+            <if test="money != null">
+                #{money},
+            </if>
+            <if test="brokerage != null">
+                #{brokerage},
+            </if>
+            <if test="rule != null">
+                #{rule},
+            </if>
+            <if test="priority != null">
+                #{priority},
+            </if>
+            <if test="mapX != null">
+                #{map_x},
+            </if>
+            <if test="mapY != null">
+                #{map_y},
+            </if>
+            <if test="mapZoom != null">
+                #{map_zoom},
+            </if>
+            <if test="salaryId != null">
+                #{salaryId},
+            </if>
+            <if test="higSalary != null">
+                #{higSalary},
+            </if>
+            <if test="lowSalary != null">
+                #{lowSalary},
+            </if>
+            <if test="isgraduate != null">
+                #{isgraduate},
+            </if>
+            <if test="showcompany != null">
+                #{showcompany},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.Job">
+        update job
+        <set>
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="companyId != null">
+                company_id = #{companyId},
+            </if>
+            <if test="isAllDay != null">
+                is_all_day = #{isAllDay},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="jobCateId != null">
+                job_cate_id = #{jobCateId},
+            </if>
+            <if test="salary != null">
+                salary = #{salary},
+            </if>
+            <if test="jobExp != null">
+                job_exp = #{jobExp},
+            </if>
+            <if test="educationExp != null">
+                education_exp = #{educationExp},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+            <if test="adress != null">
+                adress = #{adress},
+            </if>
+            <if test="state != null and state!=''">
+                state = #{state},
+            </if>
+            <if test="cityId != null">
+                city_id = #{cityId},
+            </if>
+            <if test="countryId != null">
+                country_id = #{countryId},
+            </if>
+            <if test="provinceId != null">
+                province_id = #{provinceId},
+            </if>
+            <if test="peopleNum != null">
+                people_num = #{peopleNum},
+            </if>
+            <if test="timeliness != null">
+                timeliness = #{timeliness},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime},
+            </if>
+            <if test="partTimeSalary != null">
+                part_time_salary = #{partTimeSalary},
+            </if>
+            <if test="payments != null">
+                payments = #{payments},
+            </if>
+            <if test="jobContent != null">
+                job_content = #{jobContent},
+            </if>
+            <if test="jobSex != null">
+                job_sex = #{jobSex},
+            </if>
+            <if test="startAge != null">
+                start_age = #{startAge},
+            </if>
+            <if test="endAge != null">
+                end_age = #{endAge},
+            </if>
+            <if test="money != null">
+                money = #{money},
+            </if>
+            <if test="brokerage != null">
+                brokerage = #{brokerage},
+            </if>
+            <if test="rule != null">
+                rule = #{rule},
+            </if>
+            <if test="priority != null">
+                priority = #{priority},
+            </if>
+            <if test="mapX != null">
+                map_x = #{mapX},
+            </if>
+            <if test="mapY != null">
+                map_y = #{mapY},
+            </if>
+            <if test="mapZoom != null">
+                map_zoom = #{mapZoom},
+            </if>
+            <if test="salaryId != null">
+                salary_id = #{salaryId},
+            </if>
+            <if test="higSalary != null">
+                hig_salary = #{higSalary},
+            </if>
+            <if test="lowSalary != null">
+                low_salary = #{lowSalary},
+            </if>
+            <if test="isgraduate != null">
+                isgraduate = #{isgraduate},
+            </if>
+            <if test="showcompany != null">
+                showcompany = #{showcompany},
+            </if>
+                create_time = now(),
+        </set>
+        where job_id = #{jobId}
+    </update>
+    <update id="updateReadcount" parameterType="java.lang.Integer">
+        update job
+        set read_count = read_count+1
+        where job_id = #{jobId}
+    </update>
+
+    <update id="updateIsread" parameterType="java.lang.Integer">
+        update job
+        set isread = 0
+        where job_id = #{jobId}
+    </update>
+    <update id="updateIsread2" parameterType="java.lang.Integer">
+        update job
+        set isread = 1
+        where job_id = #{jobId}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.Job">
+        update job
+        set id               = #{id,jdbcType=INTEGER},
+            company_id       = #{companyId,jdbcType=INTEGER},
+            is_all_day       = #{isAllDay,jdbcType=VARCHAR},
+            name             = #{name,jdbcType=VARCHAR},
+            job_cate_id      = #{jobCateId,jdbcType=INTEGER},
+            salary           = #{salary,jdbcType=DECIMAL},
+            job_exp          = #{jobExp,jdbcType=VARCHAR},
+            education_exp    = #{educationExp,jdbcType=VARCHAR},
+            remark           = #{remark,jdbcType=VARCHAR},
+            adress           = #{adress,jdbcType=VARCHAR},
+            state            = #{state,jdbcType=VARCHAR},
+            city_id          = #{cityId,jdbcType=INTEGER},
+            country_id       = #{countryId,jdbcType=INTEGER},
+            province_id      = #{provinceId,jdbcType=INTEGER},
+            people_num       = #{peopleNum,jdbcType=INTEGER},
+            timeliness       = #{timeliness,jdbcType=VARCHAR},
+            start_time       = #{startTime,jdbcType=TIMESTAMP},
+            end_time         = #{endTime,jdbcType=TIMESTAMP},
+            part_time_salary = #{partTimeSalary,jdbcType=DECIMAL},
+            payments         = #{payments,jdbcType=VARCHAR},
+            job_content      = #{jobContent,jdbcType=VARCHAR},
+            job_sex          = #{jobSex,jdbcType=VARCHAR},
+            start_age        = #{startAge,jdbcType=INTEGER},
+            end_age          = #{endAge,jdbcType=INTEGER},
+            money            = #{money,jdbcType=DECIMAL},
+            brokerage        = #{brokerage,jdbcType=DECIMAL},
+            rule             = #{rule,jdbcType=VARCHAR},
+            priority         = #{priority,jdbcType=VARCHAR}
+        where job_id = #{jobId,jdbcType=INTEGER}
+    </update>
+</mapper>

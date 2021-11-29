@@ -1,0 +1,464 @@
+{
+	"easycom": {
+		"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
+	},
+	"pages": [{
+		"path": "pages/index/index",
+		"style": {
+			"navigationStyle": "custom",
+			"onReachBottomDistance": 50
+
+		}
+	}, {
+		"path": "pages/strategy/strategy",
+		"style": {
+			"navigationBarTitleText": "攻略",
+			"enablePullDownRefresh": false
+		}
+
+	}, {
+		"path": "pages/myIndex/myIndex",
+		"style": {
+			"navigationStyle": "custom"
+		}
+
+	}, {
+		"path": "pages/news/news",
+
+		"style": {
+			"navigationStyle": "custom", // 隐藏系统导航栏
+			"navigationBarTextStyle": "white" // 状态栏字体为白色，只能为 white-白色，black-黑色 二选一
+		}
+
+	}, {
+		"path": "pages/personal/personal",
+		"style": {
+			"navigationBarTitleText": "招聘任务",
+			"enablePullDownRefresh": false
+		}
+
+	}, {
+		"path": "pages/resumetj/resumetj",
+		"style": {
+			"navigationBarTitleText": "简历推荐",
+			"enablePullDownRefresh": false
+		}
+
+	}],
+	"subPackages": [{
+		"root": "pagesA",
+		"pages": [{
+				"path": "jobDetail/jobDetail",
+				"style": {
+					"navigationBarTitleText": "职位详情",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "successDelivery/successDelivery",
+				"style": {
+					"navigationBarTitleText": "投递结果",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "mySuggest/mySuggest",
+				"style": {
+					"navigationStyle": "custom"
+				}
+
+			}, {
+				"path": "suggestProgress/suggestProgress", //推荐进展
+				"style": {
+					"navigationStyle": "custom"
+				}
+
+			}, {
+				"path": "myWallet/myWallet", //我的钱包
+				"style": {
+					"navigationStyle": "custom"
+				}
+
+			}, {
+				"path": "submitApplication/submitApplication", //提现申请
+				"style": {
+					"navigationBarTitleText": "提现申请",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "myCollection/myCollection",
+				"style": {
+					"navigationBarTitleText": "我的收藏",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "messageList/messageList",
+				"style": {
+					"navigationBarTitleText": "消息通知",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "myApplication/myApplication",
+				"style": {
+					"navigationBarTitleText": "我的应聘",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "interviewInvitation/interviewInvitation",
+				"style": {
+					"navigationBarTitleText": "面试邀约", //面试邀约详情
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "resume/resume",
+				"style": {
+					"navigationBarTitleText": "简历",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "previewResume/previewResume",
+				"style": {
+					"navigationBarTitleText": "查看简历",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "bindPhone/bindPhone", //绑定手机号
+				"style": {
+					"navigationStyle": "custom"
+				}
+
+			}, {
+				"path": "basicInformation/basicInformation",
+				"style": {
+					"navigationBarTitleText": "基本信息",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "jobHunting/jobHunting",
+				"style": {
+					"navigationBarTitleText": "求职意向",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "getSendList/getSendList",
+				"style": {
+					"navigationBarTitleText": "收支明细",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "talentRanking/talentRanking", //推荐排行榜
+				"style": {
+					"navigationStyle": "custom"
+				}
+
+			}, {
+				"path": "noviceGuidance/noviceGuidance",
+				"style": {
+					"navigationBarTitleText": "新手引导",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "userAgreement/userAgreement",
+				"style": {
+					"navigationBarTitleText": "用户协议",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "complaint/complaint",
+				"style": {
+					"navigationBarTitleText": "举报",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "personalSet/personalSet",
+				"style": {
+					"navigationBarTitleText": "个人信息",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "editPerson/editPerson",
+				"style": {
+					"navigationBarTitleText": "设置",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "strategyDetails/strategyDetails",
+				"style": {
+					"navigationBarTitleText": "攻略详情",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "treeJob/treeJob",
+				"style": {
+					"navigationBarTitleText": "职位列表",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "addEducations/addEducations",
+				"style": {
+					"navigationBarTitleText": "教育经历",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "addWorkExperience/addWorkExperience",
+				"style": {
+					"navigationBarTitleText": "工作经验",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "addProjectExperience/addProjectExperience",
+				"style": {
+					"navigationBarTitleText": "项目经验",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "addLanguage/addLanguage",
+				"style": {
+					"navigationBarTitleText": "语言能力",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "addCertificate/addCertificate",
+				"style": {
+					"navigationBarTitleText": "证书",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "selfEvaluation/selfEvaluation",
+				"style": {
+					"navigationBarTitleText": "自我评价",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "cashRules/cashRules",
+				"style": {
+					"navigationBarTitleText": "提现规则",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "companyInformation/companyInformation",
+				"style": {
+					"navigationBarTitleText": "公司信息",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "report/report",
+				"style": {
+					"navigationBarTitleText": "举报",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "jobMethods/jobMethods",
+				"style": {
+					"navigationBarTitleText": "招聘攻略",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "charts/charts",
+				"style": {
+					"navigationBarTitleText": "排行榜单",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "talentDaomian/talentDaomian",
+				"style": {
+					"navigationStyle": "custom"
+				}
+
+			}, {
+				"path": "talentTuijian/talentTuijian",
+				"style": {
+					"navigationStyle": "custom"
+				}
+
+			}, {
+				"path": "GiveCommission/GiveCommission",
+				"style": {
+					"navigationBarTitleText": "",
+					"enablePullDownRefresh": false
+				}	
+			}
+		]
+	}, {
+		"root": "pageB",
+		"pages": [{
+				"path": "joinreseller/joinreseller",
+				"style": {
+					"navigationBarTitleText": "申请成为分销商",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "switch/switch",
+				"style": {
+					"navigationBarTitleText": "切换身份",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "company/company",
+				"style": {
+					"navigationBarTitleText": "企业认证",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "success/success",
+				"style": {
+					"navigationBarTitleText": "提交结果",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "jobadd/jobadd", //添加工作 到此
+				"style": {
+					"navigationStyle": "custom"
+				}
+			}, {
+				"path": "jobKind/jobKind",
+				"style": {
+					"navigationBarTitleText": "职位类型",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "positionManage/positionManage",
+				"style": {
+					"navigationBarTitleText": "职位管理",
+					"enablePullDownRefresh": false
+				}
+
+			},
+
+			{
+				"path": "enterpriseJobDetail/enterpriseJobDetail",
+				"style": {
+					"navigationBarTitleText": "职位详情", //企业职位详情
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "wantResume/wantResume",
+				"style": {
+					"navigationBarTitleText": "应聘简历", //公司简历
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "talentDevelopment/talentDevelopment", //人才进展
+				"style": {
+					"navigationStyle": "custom"
+				}
+
+			}, {
+				"path": "points/points",
+				"style": {
+					"navigationStyle": "custom"
+				}
+
+			}, {
+				"path": "inviteFriends/inviteFriends",
+				"style": {
+					"navigationStyle": "custom"
+				}
+
+			}
+		    ,{
+                    "path" : "pointDetail/pointDetail",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "积分明细",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+                ,{
+                    "path" : "changeInfo/changeInfo",
+                    "style" :                                                                                    
+                {
+					"navigationStyle": "custom"
+                }
+                
+                }
+                ,{
+                    "path" : "deposit/deposit",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "我的押金",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+            ]
+	}],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#FFFFFF",
+		"backgroundColor": "#FFFFFF",
+		"usingComponents": {
+			"ly-tree-node": "/components/ly-tree/ly-tree-node"
+		}
+	},
+	"tabBar": {
+		"color": "#919191",
+		"selectedColor": "#2E73FF",
+		"borderStyle": "white",
+		"backgroundColor": "#ffffff",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/tabBar/jsindexno.png",
+				"selectedIconPath": "static/tabBar/jhindex.png",
+				"text": "首页"
+			},
+			{
+				"pagePath": "pages/personal/personal",
+				"iconPath": "static/tabBar/recneedno.png",
+				"selectedIconPath": "static/tabBar/recneed.png",
+				"text": "招聘任务"
+			},
+			{
+				"pagePath": "pages/resumetj/resumetj",
+				"iconPath": "static/tabBar/jssomeno.png",
+				"selectedIconPath": "static/tabBar/jssome.png",
+				"text": "简历推荐"
+			},
+			{
+				"pagePath": "pages/news/news",
+				"iconPath": "static/tabBar/messageno.png",
+				"selectedIconPath": "static/tabBar/message.png",
+				"text": "消息通知"
+			},
+			{
+				"pagePath": "pages/myIndex/myIndex",
+				"iconPath": "static/tabBar/myindexno.png",
+				"selectedIconPath": "static/tabBar/myindex.png",
+				"text": "个人中心"
+			}
+		]
+	}
+}

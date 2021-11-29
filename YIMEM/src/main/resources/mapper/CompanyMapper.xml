@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.czx.yimem.dao.CompanyMapper">
+    <resultMap id="BaseResultMap" type="com.czx.yimem.entity.Company">
+        <constructor>
+            <idArg column="company_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="name" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="business_id" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="scale" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="remark" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="user_name" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="created_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="job" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="license_url" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="adress" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="city_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="country_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="province_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="state" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="is_entrust" jdbcType="BIT" javaType="java.lang.Boolean"/>
+            <arg column="resion" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="cus_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="phone" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="logourl" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="mapx" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="mapy" jdbcType="VARCHAR" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        company_id,
+        id,
+        name,
+        business_id,
+        scale,
+        remark,
+        user_name,
+        user_id,
+        created_time,
+        job,
+        license_url,
+        adress,
+        city_id,
+        country_id,
+        province_id,
+        state,
+        is_entrust,
+        resion,
+        cus_id,
+        phone,
+        logourl,
+        mapx,
+        mapy
+    </sql>
+
+
+    <select id="companydeliver" resultType="java.lang.Integer" >
+        SELECT COUNT(1) from deliver d
+         LEFT JOIN job j on j.job_id=d.job_id
+         LEFT JOIN company c on c.company_id=j.company_id
+         LEFT JOIN `user` u on u.phone_num =c.phone
+        where u.user_id =#{userId} and  d.dev_id=#{id}
+    </select>
+
+
+    <select id="finduserId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        SELECT u.user_id
+        FROM company c
+                 LEFT JOIN  user u on u.phone_num=c.phone
+        where company_id=#{companyId}
+    </select>
+
+    <select id="findByUtoU" resultType="java.lang.Integer" >
+        SELECT COUNT(1) FROM `user` u
+         LEFT JOIN company c on c.phone=u.phone_num
+        LEFT JOIN job j on j.company_id = c.company_id
+        LEFT JOIN deliver d on d.job_id=j.job_id
+        WHERE d.user_id=#{userId} and u.user_id=#{comuserId}
+    </select>
+
+    <select id="selectisAgree" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        SELECT count(1)
+        FROM company
+        where company_id=#{companyId} and state = "2"
+    </select>
+
+
+    <select id="selectByPrimaryKey" resultType="com.czx.yimem.entity.Company" parameterType="java.lang.Integer">
+        SELECT
+            c.company_id,
+            c.id,
+            c.name,
+            c.business_id,
+            c.scale,
+            c.remark,
+            c.user_name,
+            c.user_id,
+            c.created_time,
+            w.c_name as job,
+            c.license_url,
+            c.adress,
+            c.city_id,
+            c.country_id,
+            c.province_id,
+            c.state,
+            c.is_entrust,
+            c.resion,
+            c.cus_id,
+            c.phone,
+            c.logourl,
+            c.mapx,
+            c.mapy,
+            m.`name` AS gmName,
+            m.phone AS gMphone,
+            q.c_name AS businessName,
+            e.zh_label as cityName,
+            p.zh_label as provinceName
+        FROM
+            company AS c
+            LEFT JOIN member AS m ON m.id = c.cus_id
+                                     LEFT JOIN qs_category AS q ON q.c_id = c.business_id
+                                     LEFT JOIN rm_city AS e ON e.uuid = c.city_id
+                                     LEFT JOIN rm_province AS p ON p.province_code = c.province_id
+                                     LEFT JOIN qs_category w on w.c_id =c.job
+        where c.company_id =#{companyId} and c.state = "2"
+    </select>
+
+    <select id="selectByjobid" resultType="com.czx.yimem.entity.Company" parameterType="java.lang.Integer">
+        SELECT c.company_id,c.`name`,c.logourl,c.scale ,
+               c.adress,c.mapx,c.mapy,q.c_id as businessId,q.c_name as businessName
+        FROM company  c
+             LEFT JOIN job j on j.company_id=c.company_id
+                                LEFT JOIN qs_category q on q.c_id=c.business_id
+        where j.job_id=#{jobId}
+    </select>
+
+    <select id="selectByPrimaryKey2" resultType="com.czx.yimem.entity.Company" parameterType="java.lang.String">
+        SELECT
+            c.company_id,
+            c.id,
+            c.name,
+            c.business_id,
+            c.scale,
+            c.remark,
+            c.user_name,
+            c.user_id,
+            c.created_time,
+            w.c_name as job,
+            c.license_url,
+            c.adress,
+            c.city_id,
+            c.country_id,
+            c.province_id,
+            c.state,
+            c.is_entrust,
+            c.resion,
+            c.cus_id,
+            c.phone,
+            c.logourl,
+            c.mapx,
+            c.mapy,
+            m.`name` AS gmName,
+            m.phone AS gMphone,
+            q.c_name AS businessName,
+            e.zh_label as cityName,
+            p.zh_label as provinceName
+        FROM
+            company AS c
+            LEFT JOIN member AS m ON m.id = c.cus_id
+                                     LEFT JOIN qs_category AS q ON q.c_id = c.business_id
+                                     LEFT JOIN rm_city AS e ON e.uuid = c.city_id
+                                     LEFT JOIN rm_province AS p ON p.province_code = c.province_id
+                                     LEFT JOIN qs_category w on w.c_id =c.job
+        where c.phone = #{phone}
+    </select>
+
+    <select id="findBycompany" resultType="com.czx.yimem.entity.Company" parameterType="com.czx.yimem.entity.Company">
+        SELECT
+        c.company_id,
+        c.id,
+        c.name,
+        c.business_id,
+        c.scale,
+        c.remark,
+        c.user_name,
+        c.user_id,
+        c.created_time,
+        w.c_name as job,
+        c.license_url,
+        c.adress,
+        c.city_id,
+        c.country_id,
+        c.province_id,
+        c.state,
+        c.is_entrust,
+        c.resion,
+        c.cus_id,
+        c.phone,
+        c.logourl,
+        c.mapx,
+        c.mapy,
+        m.`name` AS gmName,
+        q.c_name AS businessName,
+        e.zh_label as cityName,
+        p.zh_label as provinceName
+        FROM
+        company AS c
+        LEFT JOIN member AS m ON m.id = c.cus_id
+        LEFT JOIN qs_category AS q ON q.c_id = c.business_id
+        LEFT JOIN rm_city AS e ON e.uuid = c.city_id
+        LEFT JOIN rm_province AS p ON p.province_code = c.province_id
+        LEFT JOIN qs_category w on w.c_id =c.job
+        <where>
+            1=1
+            <if test="companyId != null and companyId != ''">
+                and c.company_id = #{companyId}
+            </if>
+            <if test="businessId != null and businessId != ''">
+                and c.business_id = #{businessId}
+            </if>
+            <if test="scale != null and scale != ''">
+                and c.scale =#{scale}
+            </if>
+            <if test="state != null and state != ''">
+                and c.state = #{state}
+            </if>
+            <if test="userId != null and userId != ''">
+                and c.user_id = #{userId}
+            </if>
+            <if test="userName != null and userName != ''">
+                and c.user_name = #{userName}
+            </if>
+            <if test="name != null and name != ''">
+                and c.name like concat('%',#{name},'%')
+            </if>
+            <if test="adress != null and adress != ''">
+                and c.adress like concat('%',#{adress},'%')
+            </if>
+            <if test="cityId != null and cityId != ''">
+                and c.city_id = #{cityId}
+            </if>
+            <if test="countryId != null and countryId != ''">
+                and c.country_id = #{countryId}
+            </if>
+            <if test="provinceId != null and provinceId != ''">
+                and c.province_id = #{provinceId}
+            </if>
+            <if test="isEntrust != null and isEntrust != ''">
+                and c.is_entrust = #{isEntrust}
+            </if>
+            <if test="cusId != null and cusId != ''">
+                and c.cus_id = #{cusId}
+            </if>
+            <if test="phone != null and phone != ''">
+                and c.phone = #{phone}
+            </if>
+            <if test="gmName != null and gmName != ''">
+                and m.`name` = #{gmName}
+            </if>
+        </where>
+        ORDER BY c.created_time DESC
+    </select>
+
+
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from company
+        where company_id = #{companyId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.czx.yimem.entity.Company">
+        insert into company (company_id, id, name,
+                             business_id, scale, remark,
+                             user_name, user_id, created_time,
+                             job, license_url, adress,
+                             city_id, country_id, province_id,
+                             state, is_entrust, resion,
+                             cus_id)
+        values (#{companyId,jdbcType=INTEGER}, #{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+                #{businessId,jdbcType=VARCHAR}, #{scale,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+                #{userName,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, now(),
+                #{job,jdbcType=VARCHAR}, #{licenseUrl,jdbcType=VARCHAR}, #{adress,jdbcType=VARCHAR},
+                #{cityId,jdbcType=INTEGER}, #{countryId,jdbcType=INTEGER}, #{provinceId,jdbcType=INTEGER},
+                #{state,jdbcType=VARCHAR}, #{isEntrust}, #{resion,jdbcType=VARCHAR},
+                #{cusId,jdbcType=INTEGER})
+    </insert>
+    <insert id="insertSelective" parameterType="com.czx.yimem.entity.Company">
+        insert into company
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">
+                company_id,
+            </if>
+            <if test="id != null">
+                id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="businessId != null">
+                business_id,
+            </if>
+            <if test="scale != null">
+                scale,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            created_time,
+            <if test="job != null">
+                job,
+            </if>
+            <if test="licenseUrl != null">
+                license_url,
+            </if>
+            <if test="adress != null">
+                adress,
+            </if>
+            <if test="cityId != null">
+                city_id,
+            </if>
+            <if test="countryId != null">
+                country_id,
+            </if>
+            <if test="provinceId != null">
+                province_id,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="logourl != null">
+                logourl,
+            </if>
+            <if test="mapx != null">
+                mapx,
+            </if>
+            <if test="mapy != null">
+                mapy,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">
+                #{companyId,jdbcType=INTEGER},
+            </if>
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="businessId != null">
+                #{businessId,jdbcType=VARCHAR},
+            </if>
+            <if test="scale != null">
+                #{scale,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            now(),
+            <if test="job != null">
+                #{job,jdbcType=VARCHAR},
+            </if>
+            <if test="licenseUrl != null">
+                #{licenseUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="adress != null">
+                #{adress,jdbcType=VARCHAR},
+            </if>
+            <if test="cityId != null">
+                #{cityId,jdbcType=INTEGER},
+            </if>
+            <if test="countryId != null">
+                #{countryId,jdbcType=INTEGER},
+            </if>
+            <if test="provinceId != null">
+                #{provinceId,jdbcType=INTEGER},
+            </if>
+            <if test="phone != null">
+                #{phone},
+            </if>
+            <if test="logourl != null">
+                #{logourl},
+            </if>
+            <if test="mapx != null">
+                #{mapx},
+            </if>
+            <if test="mapy != null">
+                #{mapy},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.Company">
+        update company
+        <set>
+            <if test="id != null">
+                id = #{id,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="businessId != null">
+                business_id = #{businessId,jdbcType=VARCHAR},
+            </if>
+            <if test="scale != null">
+                scale = #{scale,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="job != null">
+                job = #{job,jdbcType=VARCHAR},
+            </if>
+            <if test="licenseUrl != null">
+                license_url = #{licenseUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="adress != null">
+                adress = #{adress,jdbcType=VARCHAR},
+            </if>
+            <if test="cityId != null">
+                city_id = #{cityId,jdbcType=INTEGER},
+            </if>
+            <if test="countryId != null">
+                country_id = #{countryId,jdbcType=INTEGER},
+            </if>
+            <if test="provinceId != null">
+                province_id = #{provinceId,jdbcType=INTEGER},
+            </if>
+            <if test="state != null">
+                state = #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="isEntrust != null">
+                is_entrust = #{isEntrust},
+            </if>
+            <if test="resion != null">
+                resion = #{resion,jdbcType=VARCHAR},
+            </if>
+            <if test="cusId != null">
+                cus_id = #{cusId,jdbcType=INTEGER},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="logourl != null">
+                logourl = #{logourl},
+            </if>
+            <if test="mapx != null">
+                mapx = #{mapx},
+            </if>
+            <if test="mapy != null">
+                mapy = #{mapy},
+            </if>
+        </set>
+        where company_id = #{companyId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.Company">
+        update company
+        set id          = #{id,jdbcType=INTEGER},
+            name        = #{name,jdbcType=VARCHAR},
+            business_id = #{businessId,jdbcType=VARCHAR},
+            scale       = #{scale,jdbcType=VARCHAR},
+            remark      = #{remark,jdbcType=VARCHAR},
+            user_name   = #{userName,jdbcType=VARCHAR},
+            user_id     = #{userId,jdbcType=INTEGER},
+            job         = #{job,jdbcType=VARCHAR},
+            license_url = #{licenseUrl,jdbcType=VARCHAR},
+            adress      = #{adress,jdbcType=VARCHAR},
+            city_id     = #{cityId,jdbcType=INTEGER},
+            country_id  = #{countryId,jdbcType=INTEGER},
+            province_id = #{provinceId,jdbcType=INTEGER},
+            state       = #{state,jdbcType=VARCHAR},
+            is_entrust  = #{isEntrust},
+            resion      = #{resion,jdbcType=VARCHAR},
+            cus_id      = #{cusId,jdbcType=INTEGER}
+        where company_id = #{companyId,jdbcType=INTEGER}
+    </update>
+</mapper>

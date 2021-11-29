@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.czx.yimem.dao.MemberMapper">
+    <resultMap id="BaseResultMap" type="com.czx.yimem.entity.Member">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="head_img_url" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="phone" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="account" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="password" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="state" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,
+        create_time,
+        head_img_url,
+        name,
+        phone,
+        account,
+        password,
+        state
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from member
+        where id = #{id,jdbcType=INTEGER} and state = "1"
+    </select>
+
+
+    <select id="selectphoneBydevId" parameterType="java.lang.Integer" resultType="java.lang.String">
+        SELECT m.phone from member m
+        LEFT JOIN company c on c.cus_id=m.id
+        LEFT JOIN job j on j.company_id=c.company_id
+        LEFT JOIN deliver d on d.job_id=j.job_id
+        where d.dev_id=#{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="getName" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+            name
+        from member
+        where account = #{account}
+    </select>
+    <select id="search" parameterType="java.lang.String" resultMap="BaseResultMap">
+
+        SELECT
+        *
+        FROM
+        member r
+        LEFT JOIN rc_group_men m ON r.id = m.m_user_id
+        WHERE
+         r.flag =1
+        <if test="ids != null">
+            and m.dep_id IN
+            <foreach collection="ids" item="code" index="index" open="(" close=")" separator=",">
+                #{code}
+            </foreach>
+        </if>
+        <if test="key != null and key!= ''">
+            and r.name like concat('%',#{key},'%')
+        </if>
+        ORDER BY
+        r.create_time DESC
+    </select>
+
+    <select id="findByMember" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from member
+        where account = #{account} and state = "1"
+    </select>
+
+    <select id="findaccount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(*)
+        from member
+        where account = #{account}
+          and state = "1"
+    </select>
+
+    <select id="findisPassword" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(*)
+        from member
+        where id = #{id} and  ISNULL(`password`)
+    </select>
+
+    <select id="findphone" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(*)
+        from member
+        where phone = #{phone}
+          and state = "1"
+    </select>
+
+    <select id="findaccountByphone" parameterType="java.lang.String" resultType="java.lang.String">
+        select account
+        from member
+        where phone = #{phone}
+          and state = "1"
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from member
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.czx.yimem.entity.Member" useGeneratedKeys="true" keyProperty="id">
+        insert into member (id, create_time, head_img_url,
+                            name, phone, account,
+                            password, state)
+        values (#{id,jdbcType=INTEGER}, now(), #{headImgUrl,jdbcType=VARCHAR},
+                #{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{account,jdbcType=VARCHAR},
+                #{password,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.czx.yimem.entity.Member" useGeneratedKeys="true" keyProperty="id">
+        insert into member
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            create_time,
+            <if test="headImgUrl != null">
+                head_img_url,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="account != null">
+                account,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            now(),
+            <if test="headImgUrl != null">
+                #{headImgUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="account != null">
+                #{account,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.czx.yimem.entity.Member">
+        update member
+        <set>
+
+            <if test="headImgUrl != null">
+                head_img_url = #{headImgUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="account != null">
+                account = #{account,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null and password!=''">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                state = #{state,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.czx.yimem.entity.Member">
+        update member
+        set head_img_url = #{headImgUrl,jdbcType=VARCHAR},
+            name         = #{name,jdbcType=VARCHAR},
+            phone        = #{phone,jdbcType=VARCHAR},
+            account      = #{account,jdbcType=VARCHAR},
+            password     = #{password,jdbcType=VARCHAR},
+            state        = #{state,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>
